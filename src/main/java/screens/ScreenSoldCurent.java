@@ -16,6 +16,10 @@ public class ScreenSoldCurent extends Screen {
 
     private static final int STAGE_DEFAULT_HEIGHT = 200;
 
+    private static TextArea txtNrCont;
+
+    private static Button btnSold;
+
     public ScreenSoldCurent() {
         createVBox();
         createScene();
@@ -34,14 +38,23 @@ public class ScreenSoldCurent extends Screen {
     protected void createControls() {
         DatabaseOperations op = new DatabaseOperations();
 
+        Label nrCont = new Label("Numar cont");
+        txtNrCont=new TextArea("");
+        btnSold=new Button("Afisare sold");
+
         Label lblCont = new Label("Sold curent: ");
         Label sold = new Label();
-        String columnLabel = "sold_curent";
-        try {
-            op.getInfo("SELECT " + columnLabel + " from cont", sold, columnLabel);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        vBox.getChildren().addAll(lblCont, sold);
+        String columnLabel = "sold_initial";
+
+        btnSold.setOnMouseClicked(mouseEvent -> {
+            try {
+                op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
+                System.out.println(op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        });
+
+        vBox.getChildren().addAll(nrCont,txtNrCont, lblCont, sold, btnSold);
     }
 }
