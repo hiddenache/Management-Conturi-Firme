@@ -1,8 +1,14 @@
 package screens;
 
+import SQL.DatabaseConnection;
+import SQL.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class ScreenSoldCurent extends Screen {
 
@@ -26,8 +32,16 @@ public class ScreenSoldCurent extends Screen {
     }
 
     protected void createControls() {
+        DatabaseOperations op = new DatabaseOperations();
+
         Label lblCont = new Label("Sold curent: ");
-        Label sold = new Label("99.555$");
-        vBox.getChildren().addAll(lblCont);
+        Label sold = new Label();
+        String columnLabel = "sold_curent";
+        try {
+            op.getInfo("SELECT " + columnLabel + " from cont", sold, columnLabel);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        vBox.getChildren().addAll(lblCont, sold);
     }
 }

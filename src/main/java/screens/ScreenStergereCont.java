@@ -1,5 +1,6 @@
 package screens;
 
+import SQL.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -33,6 +34,9 @@ public class ScreenStergereCont extends Screen {
         btnDelete=new Button("Stergere cont");
         vBox.getChildren().addAll(lblCont,txtCont,btnDelete);
 
-
+        btnDelete.setOnMouseClicked(mouseEvent -> {
+            DatabaseOperations op = new DatabaseOperations();
+            op.deleteAccount(txtCont.getText().toString());
+        });
     }
 }

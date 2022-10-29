@@ -6,34 +6,22 @@ import java.sql.DriverManager;
 public class DatabaseConnection {
 
     /**
-     *  Exemplu de conectare
-     *  DatabaseConnection connectNow = new DatabaseConnection();
-     *  Connection connectDB = connectNow.getConnection();
-     *
-     *  String connectQuery = "SELECT * from cont";
-     *
-     *  try {
-     *      Statement stmt = connectDB.createStatement();
-     *
-     *      ResultSet queryOutput = stmt.executeQuery(connectQuery);
-     *
-     *      while(queryOutput.next()){
-     *          cevaLabel.setText(queryOutput.getString());
-     *      }
-     *  }
+     *  DOWNLOAD XAMPP
+     *  START Apache and Mysql from XAMPP
+     *  Click on Admin button from Mysql tab
+     *  Click on IMPORT Button
+     *  Select your database to be imported
      */
     public Connection databaseLink;
 
     public Connection getConnection(){
-        String databaseName = "Firma";
-        String databaseUser = "";
+        String databaseName = "firma";
+        String databaseUser = "root";
         String databasePass = "";
 
         String url = "jdbc:mysql://localhost/" + databaseName;
 
         try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
             databaseLink = DriverManager.getConnection(url, databaseUser, databasePass);
 
         } catch (Exception e){
