@@ -4,15 +4,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
-public class ScreenSoldCurent extends Screen{
-    
-    private static final int  STAGE_DEFAULT_WIDTH=600;
-    
-    private static final int STAGE_DEFAULT_HEIGHT=200;
-    
-    private static TextArea txtTipCont;
+public class ScreenSoldCurent extends Screen {
 
-    public void ScreenSoldCurent() {
+    private static final int STAGE_DEFAULT_WIDTH = 600;
+
+    private static final int STAGE_DEFAULT_HEIGHT = 200;
+
+    public ScreenSoldCurent() {
         createVBox();
         createScene();
         createStage();
@@ -21,16 +19,15 @@ public class ScreenSoldCurent extends Screen{
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
-    protected void createStage(){
-        super.createStage(STAGE_DEFAULT_WIDTH,STAGE_DEFAULT_HEIGHT);
-        this.stage.setTitle("Afisare tranzactii");
-    }
-    protected void createControls(){
-        txtTipCont=new TextArea("");
-        txtTipCont.setPrefSize(scene.getWidth(),stage.getHeight());
-        Label lblCont=new Label("Tip cont");
-        Button btnAfisare = new Button("Afisare tranzactii");
-        vBox.getChildren().addAll(lblCont,txtTipCont,btnAfisare);
 
+    protected void createStage() {
+        super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
+        this.stage.setTitle("Sold curent");
+    }
+
+    protected void createControls() {
+        Label lblCont = new Label("Sold curent: ");
+        Label sold = new Label("99.555$");
+        vBox.getChildren().addAll(lblCont);
     }
 }

@@ -63,9 +63,9 @@ public class HelloApplication extends Application {
         btnAfisareTranzactii.setOnMouseClicked(mouseEvent ->{
             ScreenAfisareTranzactii screenAfisareTranzactii=new ScreenAfisareTranzactii();
         } );
-        btnSoldCurent.setOnMouseClicked((mouseEvent -> {
-            ScreenSoldCurent screenSoldCurent = new ScreenSoldCurent();
-        }));
+        btnAfisareTranzactii.setOnMouseClicked(mouseEvent ->{
+            ScreenAfisareTranzactii screenAfisareTranzactii=new ScreenAfisareTranzactii();
+        } );
     }
 
 
