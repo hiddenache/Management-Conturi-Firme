@@ -51,6 +51,12 @@ public class ScreenAdaugareCont extends Screen {
         Label lblSold=new Label("Sold initial");
         vBox.getChildren().addAll(lblNume,txtNumeCont,lblDescriere,txtDescriere,lblTipCont, choiceBox,lblSold,txtSoldInitial,btnAdaugare);
 
+        /**
+         *  The conditions will be added soon
+         *  txtNumeCont should not be NULL
+         *  txtSoldInitail should not be NULL or invalid(ex. -1244$)
+         *  etc...
+         */
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
             op.addAccount(txtNumeCont.getText(), txtDescriere.getText(), choiceBox.getSelectionModel().getSelectedItem().toString(), Float.valueOf(txtSoldInitial.getText()));
