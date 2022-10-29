@@ -53,20 +53,7 @@ public class ScreenAdaugareCont extends Screen {
 
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-
-            //get the index to convert from index to text selected
-            int indexChoiceEnum = Integer.valueOf(choiceBox.getSelectionModel().getSelectedIndex());
-            String chosen;
-            switch (indexChoiceEnum){
-                case 0:
-                    chosen = "ca";
-                case 1:
-                    chosen = "pa";
-                case 2:
-                    chosen = "ac";
-                default: chosen = "0";
-            }
-            op.addAccount(txtNumeCont.getText(), txtDescriere.getText(), chosen, Float.valueOf(txtSoldInitial.getText()));
+            op.addAccount(txtNumeCont.getText(), txtDescriere.getText(), choiceBox.getSelectionModel().getSelectedItem().toString(), Float.valueOf(txtSoldInitial.getText()));
         });
     }
 
