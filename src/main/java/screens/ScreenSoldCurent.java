@@ -1,14 +1,9 @@
 package screens;
 
-import SQL.DatabaseConnection;
-import SQL.DatabaseOperations;
+import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 public class ScreenSoldCurent extends Screen {
 
@@ -36,7 +31,6 @@ public class ScreenSoldCurent extends Screen {
     }
 
     protected void createControls() {
-        DatabaseOperations op = new DatabaseOperations();
 
         Label nrCont = new Label("Numar cont");
         txtNrCont=new TextArea("");
@@ -48,8 +42,10 @@ public class ScreenSoldCurent extends Screen {
 
         btnSold.setOnMouseClicked(mouseEvent -> {
             try {
-                op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
-                System.out.println(op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
+                sqlConnection=getConnection().orElse(null);
+                DatabaseOperations op = new DatabaseOperations();
+                op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
+                System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
             }catch(Exception e){
                 e.printStackTrace();
             }

@@ -1,6 +1,6 @@
 package screens;
 
-import SQL.DatabaseOperations;
+import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -36,7 +36,8 @@ public class ScreenStergereCont extends Screen {
 
         btnDelete.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-            op.deleteAccount(txtCont.getText().toString());
+           // sqlConnection= getConnection().orElse(null);
+            op.deleteAccount(sqlConnection, txtCont.getText());
         });
     }
 }

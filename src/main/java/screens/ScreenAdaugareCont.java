@@ -1,15 +1,12 @@
 package screens;
 
-import SQL.DatabaseOperations;
+
+import databse.DatabaseOperations;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ScreenAdaugareCont extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
@@ -59,7 +56,8 @@ public class ScreenAdaugareCont extends Screen {
          */
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-            op.addAccount(txtNumeCont.getText(), txtDescriere.getText(), choiceBox.getSelectionModel().getSelectedItem().toString(), Float.valueOf(txtSoldInitial.getText()));
+         //   sqlConnection=getConnection().orElse(null);
+            op.addAccount(sqlConnection,txtNumeCont.getText(), txtDescriere.getText(), choiceBox.getSelectionModel().getSelectedItem().toString(), Float.valueOf(txtSoldInitial.getText()));
         });
     }
 
