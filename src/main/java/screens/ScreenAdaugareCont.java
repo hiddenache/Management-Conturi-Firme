@@ -8,6 +8,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
+import java.sql.Connection;
+
 public class ScreenAdaugareCont extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
     private static final int STAGE_DEFAULT_HEIGHT=600;
@@ -21,7 +23,7 @@ public class ScreenAdaugareCont extends Screen {
     String items[] = {"ca", "pa", "ac"};
 
     public ScreenAdaugareCont() {
-         createVBox();
+        createVBox();
          createScene();
          createStage();
          createControls();

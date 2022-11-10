@@ -11,6 +11,7 @@ public class ScreenAfisareTranzactii extends Screen {
     private static Button btnAfisare;
 
     public ScreenAfisareTranzactii() {
+
         createVBox();
         createScene();
         createStage();

@@ -18,8 +18,7 @@ public abstract class Screen {
     protected VBox vBox;
     protected Scene scene;
     protected Stage stage;
-    private DatabaseManager databaseManager;
-    protected Connection sqlConnection= getConnection().orElse(null);
+    protected static Connection sqlConnection=getConnection().orElse(null);
 
 
 
@@ -39,10 +38,11 @@ public abstract class Screen {
         vBox.setSpacing(SPACING_VALUE);
     }
     protected abstract void createControls();
-    protected Optional<Connection> getConnection() {
+    private static Optional<Connection> getConnection() {
 
-        databaseManager =new DatabaseManager();
+        DatabaseManager databaseManager =new DatabaseManager();
         return databaseManager.connect();
+
 
     }
     }

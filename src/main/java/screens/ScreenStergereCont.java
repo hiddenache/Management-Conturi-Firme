@@ -9,6 +9,7 @@ public class ScreenStergereCont extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
     private static final int STAGE_DEFAULT_HEIGHT=200;
     public ScreenStergereCont() {
+
         createVBox();
         createScene();
         createStage();

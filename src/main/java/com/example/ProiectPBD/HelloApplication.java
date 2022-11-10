@@ -9,6 +9,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import screens.*;
 
+import java.sql.Connection;
+
 public class HelloApplication extends Application {
     private final VBox root = new VBox(10);
     private static final int SCENE_DEFAULT_WIDTH = 300;
@@ -17,8 +19,10 @@ public class HelloApplication extends Application {
     private static final int BUTTOW_HEIGHT=25;
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
    private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnAfisareTranzactiiData,btnCalculareBilant,btnStergereCont;
+    protected Connection sqlConnection;
     @Override
     public void start(Stage stage) {
+
         root.setAlignment(Pos.TOP_CENTER);
         root.prefHeightProperty().bind(SCENE.heightProperty());
         root.prefWidthProperty().bind(SCENE.widthProperty());

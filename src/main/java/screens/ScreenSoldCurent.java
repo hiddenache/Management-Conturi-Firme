@@ -16,6 +16,7 @@ public class ScreenSoldCurent extends Screen {
     private static Button btnSold;
 
     public ScreenSoldCurent() {
+
         createVBox();
         createScene();
         createStage();
@@ -42,7 +43,6 @@ public class ScreenSoldCurent extends Screen {
 
         btnSold.setOnMouseClicked(mouseEvent -> {
             try {
-                sqlConnection=getConnection().orElse(null);
                 DatabaseOperations op = new DatabaseOperations();
                 op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
                 System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
