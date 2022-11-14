@@ -1,6 +1,5 @@
 package com.example.ProiectPBD;
 
-import databse.DatabaseManager;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -9,17 +8,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import screens.*;
 
-import java.sql.Connection;
-
 public class HelloApplication extends Application {
     private final VBox root = new VBox(10);
-    private static final int SCENE_DEFAULT_WIDTH = 300;
+    private static final int SCENE_DEFAULT_WIDTH = 350;
     private static final int SCENE_DEFAULT_HEIGHT = 250;
-    private static final int BUTTON_WIDTH=180;
+    private static final int BUTTON_WIDTH=250;
     private static final int BUTTOW_HEIGHT=25;
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
-   private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnAfisareTranzactiiData,btnCalculareBilant,btnStergereCont;
-    protected Connection sqlConnection;
+   private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont;
     @Override
     public void start(Stage stage) {
 
@@ -27,9 +23,10 @@ public class HelloApplication extends Application {
         root.prefHeightProperty().bind(SCENE.heightProperty());
         root.prefWidthProperty().bind(SCENE.widthProperty());
         createButtons();
-        root.getChildren().addAll(btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnAfisareTranzactiiData,btnCalculareBilant,btnStergereCont);
+        root.getChildren().addAll(btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont);
         stage.setScene(SCENE);
         stage.setTitle("Meniu Principal");
+        createBtnHandlers();
         stage.show();
 
     }
@@ -37,8 +34,7 @@ public class HelloApplication extends Application {
         btnAdaugareCont = new Button("Adaugare cont");
         btnTranzactieNoua = new Button("Tranzactie noua");
         btnSoldCurent = new Button("Sold curent");
-        btnAfisareTranzactii = new Button("Afisare tranzactii pentru un cont");
-        btnAfisareTranzactiiData = new Button("Afisare tranzactii dupa data");
+        btnAfisareTranzactii = new Button("Afisare tranzactii");
         btnCalculareBilant = new Button("Calculare bilant initial");
         btnStergereCont = new Button("Stergere cont");
         /* ------------------------------------------------------ Preferred size ----------------------------------------------------- */
@@ -46,31 +42,18 @@ public class HelloApplication extends Application {
         btnTranzactieNoua.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
         btnSoldCurent.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
         btnAfisareTranzactii.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
-        btnAfisareTranzactiiData.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
         btnCalculareBilant.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
         btnStergereCont.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
-        CreateBtnHandlers();
+
         /* ------------------------------------------------------ Handlers ----------------------------------------------------- */
 
     }
-    private void CreateBtnHandlers() {
-        btnAdaugareCont.setOnMouseClicked(mouseEvent -> {
-            ScreenAdaugareCont screenAdaugareCont = new ScreenAdaugareCont();
-
-        });
-        btnTranzactieNoua.setOnMouseClicked(mouseEvent -> {
-            ScreenTranzactieNoua screenTranzactieNoua = new ScreenTranzactieNoua();
-
-        });
-        btnStergereCont.setOnMouseClicked(mouseEvent -> {
-            ScreenStergereCont screenStergereCont = new ScreenStergereCont();
-        });
-        btnAfisareTranzactii.setOnMouseClicked(mouseEvent ->{
-            ScreenAfisareTranzactii screenAfisareTranzactii=new ScreenAfisareTranzactii();
-        } );
-        btnSoldCurent.setOnMouseClicked(mouseEvent ->{
-            ScreenSoldCurent screenSoldCurent=new ScreenSoldCurent();
-        } );
+    private void createBtnHandlers() {
+        btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont());
+        btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua());
+        btnStergereCont.setOnMouseClicked(mouseEvent -> new ScreenStergereCont());
+        btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii());
+        btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent());
     }
 
 

@@ -13,8 +13,6 @@ public class ScreenSoldCurent extends Screen {
 
     private static TextArea txtNrCont;
 
-    private static Button btnSold;
-
     public ScreenSoldCurent() {
 
         createVBox();
@@ -35,7 +33,7 @@ public class ScreenSoldCurent extends Screen {
 
         Label nrCont = new Label("Numar cont");
         txtNrCont=new TextArea("");
-        btnSold=new Button("Afisare sold");
+        Button btnSold = new Button("Afisare sold");
 
         Label lblCont = new Label("Sold curent: ");
         Label sold = new Label();

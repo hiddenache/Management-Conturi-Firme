@@ -1,9 +1,10 @@
 package databse;
 
+import javafx.scene.control.Alert;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -31,7 +32,13 @@ public class DatabaseManager {
                 LOGGER.info("Database connected");
                 return Optional.of(connection);
             } catch (SQLException e) {
-                LOGGER.severe("Couldn't connect to database");
+                LOGGER.severe("Nu s-a putut realiza conexiunea la baza de date");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Eroare conexiune bvaza de date");
+                alert.setHeaderText("");
+                String message ="Nu s-a putut realiza conexiunea la baza de date";
+                alert.setContentText(message);
+                alert.show();
 
         }
         return Optional.empty();

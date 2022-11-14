@@ -20,7 +20,7 @@ public class DatabaseOperations {
      */
     public String getInfo(Connection dbConnection ,String query, Label text, String columnLabel){
 
-        String queryOp = query;
+
         try{
             Statement statement = dbConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
@@ -36,23 +36,23 @@ public class DatabaseOperations {
         return result;
     }
 
-    public void deleteAccount(Connection dbConnection,String accNum){
+    public int deleteAccount(Connection dbConnection,String accNum){
 
         String queryOp = "DELETE from cont WHERE nr_cont='"+accNum+"'";
         try{
             Statement statement = dbConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
-            if (result == 1){
-                System.out.println("Contul cu numarul " + accNum + " a fost sters cu succes!");
-            } else if(result == 0){
-                System.out.println("Contul cu numarul " + accNum + " nu exista!");
-            }
+            if (result == 1)
+                return 1;
+
         }catch(Exception e){
             e.printStackTrace();
         }
+        return 0;
     }
 
-    public void addAccount(Connection dbConnection,String numeCont, String descriere, String tipCont, float sold_initial){
+
+    public int addAccount(Connection dbConnection,String numeCont, String descriere, String tipCont, float sold_initial){
 
         String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial)" +
                 "VALUES ('"+numeCont+"','"+descriere+"','"+tipCont+"','"+sold_initial+"')";
@@ -60,13 +60,13 @@ public class DatabaseOperations {
         try{
             Statement statement = dbConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
-            if (result == 1){
-                System.out.println("Contul adaugat cu succes!");
-            } else if(result == 0){
-                System.out.println("Nu se poate adauga contul!");
-            }
+            if (result == 1)
+                return 1;
+                //System.out.println("Contul adaugat cu succes!");
+
         }catch (Exception e){
             e.printStackTrace();
         }
+            return 0;
     }
 }
