@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 public class ScreenAdaugareCont extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 600;
-    private static TextArea txtNumeCont;
+    private static TextArea txtNumarCont;
 
     private static ChoiceBox choiceBox;
     private static TextArea txtDescriere;
@@ -32,17 +32,17 @@ public class ScreenAdaugareCont extends Screen {
     }
 
     protected void createControls() {
-        txtNumeCont = new TextArea("");
-        txtNumeCont.setPrefSize(scene.getWidth(), 100);
+        txtNumarCont = new TextArea("");
+        txtNumarCont.setPrefSize(scene.getWidth(), 100);
         txtDescriere = new TextArea("");
         txtSoldInitial = new TextArea("");
         Button btnAdaugare = new Button("Adaugare cont");
         choiceBox = new ChoiceBox(FXCollections.observableArrayList(items));
         Label lblTipCont = new Label("Tip cont - (ca)pital | (pa)siv | (ac)tiv");
-        Label lblNume = new Label("Nume cont");
+        Label lblNume = new Label("Numar cont");
         Label lblDescriere = new Label("Descriere");
         Label lblSold = new Label("Sold initial");
-        vBox.getChildren().addAll(lblNume, txtNumeCont, lblDescriere, txtDescriere, lblTipCont, choiceBox, lblSold, txtSoldInitial, btnAdaugare);
+        vBox.getChildren().addAll(lblNume, txtNumarCont, lblDescriere, txtDescriere, lblTipCont, choiceBox, lblSold, txtSoldInitial, btnAdaugare);
 
         /*
          *  The conditions will be added soon
@@ -53,10 +53,10 @@ public class ScreenAdaugareCont extends Screen {
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
             //   sqlConnection=getConnection().orElse(null);
-            if(op.addAccount(sqlConnection, txtNumeCont.getText(), txtDescriere.getText(),
+            if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
                     choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1)
-                createInformationAlert(txtNumeCont.getText());
-            else createErrorAllert(txtNumeCont.getText());
+                createInformationAlert(txtNumarCont.getText());
+            else createErrorAllert(txtNumarCont.getText());
         });
     }
     private void createInformationAlert(String accNum)
