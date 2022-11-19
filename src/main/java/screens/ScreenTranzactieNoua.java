@@ -38,11 +38,20 @@ public class ScreenTranzactieNoua extends Screen {
                 alert.show();
                 break;
             case "EMPTY":
-                alert.setTitle("ERROR");
-                alert.setHeaderText("");
-                message ="Check your data and try again!";
-                alert.setContentText(message);
-                alert.show();
+                Alert empty = new Alert(Alert.AlertType.ERROR);
+                empty.setTitle("ERROR");
+                empty.setHeaderText("");
+                message ="Fill out all the text boxes!";
+                empty.setContentText(message);
+                empty.show();
+                break;
+            case "ERROR":
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("ERROR");
+                error.setHeaderText("");
+                message ="An error has been ocurred!";
+                error.setContentText(message);
+                error.show();
                 break;
         }
     }
@@ -64,9 +73,17 @@ public class ScreenTranzactieNoua extends Screen {
 
         btnTransfer.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-            if(lblContCreditor.getText() == "" || lblContDebitor.getText().isBlank() || lblSuma.getText().isBlank() || lblDescriere.getText().isBlank()){
-                System.out.println("CHECK YOUR DATA AND TRY AGAIN!");
+            if(txtContDebitor.getText().isBlank() || txtContCreditor.getText().isBlank() || txtSuma.getText().isBlank() || txtDescriere.getText().isBlank()){
+                createInformationAlert("EMPTY");
             }
+            else if(!(txtContCreditor.getText().matches("[0-9]")) || !(txtContDebitor.getText().matches("[0-9]")) || Float.valueOf(txtSuma.getText())<0){
+                createInformationAlert("ERROR");
+            }
+            else if(op.newTransaction(sqlConnection, Integer.valueOf(txtContCreditor.getText()), Integer.valueOf(txtContDebitor.getText()), Float.valueOf(txtSuma.getText()), txtDescriere.getText())==0){
+                createInformationAlert("ERROR");
+            }
+
+            op.newTransaction(sqlConnection, Integer.valueOf(txtContCreditor.getText()), Integer.valueOf(txtContDebitor.getText()), Float.valueOf(txtSuma.getText()), txtDescriere.getText());
         });
 
     }
