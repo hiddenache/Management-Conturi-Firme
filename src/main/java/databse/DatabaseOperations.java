@@ -1,11 +1,18 @@
 package databse;
 
+import Storage.Transaction;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class DatabaseOperations {
 
@@ -92,15 +99,12 @@ public class DatabaseOperations {
 
         try{
             Statement statement = dbConnection.createStatement();
-            //String soldContCreditor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
             ResultSet soldContCreditor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
-            while(soldContCreditor.next()){
-                soldFinalCreditor = Float.parseFloat(soldContCreditor.getString("sold_curent")) + suma;
-            }
             ResultSet soldContDebitor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
-            while(soldContDebitor.next()){
-                soldFinalDebitor = Float.parseFloat(soldContDebitor.getString("sold_curent")) - suma;
-            }
+
+            soldFinalCreditor = Float.parseFloat(soldContCreditor.getString("sold_curent")) + suma;
+
+            soldFinalDebitor = Float.parseFloat(soldContDebitor.getString("sold_curent")) - suma;
 
             String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='"+soldFinalCreditor+"' where nr_cont='"+cont_creditor+"'";
             String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='"+soldFinalDebitor+"' where nr_cont='"+cont_debitor+"'";
@@ -113,8 +117,33 @@ public class DatabaseOperations {
 
             statement.executeUpdate(newTransactionInfo);
         }catch (Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
         return 0;
+    }
+
+    public Set getTransactions(Connection dbConnection, int nr_cont){
+        String query = "SELECT * from tranzactie where cont_debitor='"+nr_cont+"'";
+        Set<Transaction> transactions = new HashSet<Transaction>();
+
+        try{
+            Statement statement = dbConnection.createStatement();
+            ResultSet transaction = statement.executeQuery(query);
+
+            while(transaction.next()){
+                int cont_debitor = transaction.getInt("cont_debitor");
+                int cont_creditor = transaction.getInt("cont_creditor");
+                Date date = transaction.getDate("data_tranzactie");
+                float suma = transaction.getFloat("suma_tranzactie");
+                String descriere = transaction.getString("descriere_tranzactie");
+
+                Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+                transactions.add(tran);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return transactions;
     }
 }

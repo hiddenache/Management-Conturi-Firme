@@ -6,7 +6,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ScreenPopUpNumeCont extends Screen{
     private static final int STAGE_DEFAULT_WIDTH = 600;
@@ -39,22 +41,23 @@ public class ScreenPopUpNumeCont extends Screen{
         vBox.getChildren().addAll(lblNume,txtNumeCont,btnSearch);
         createBtnHandlers();
     }
-    private void createBtnHandlers() {
-        for(int i=0;i<15;i+=2)
-        {
-            listaTranzactii.add("Tranzactia "+i);
-        }
 
+    private void createBtnHandlers() {
         btnSearch.setOnMouseClicked(mouseEvent -> {
-            try {
-                DatabaseOperations op = new DatabaseOperations();
-                listaTranzactii.add(op.getInfo2(sqlConnection, "SELECT * from tranzactie where cont_debitor='"+txtNumeCont.getText()+"'"));
-                System.out.println(op.getInfo2(sqlConnection, "SELECT * from tranzactie where cont_debitor='"+txtNumeCont.getText()+"'"));
-            }catch(Exception e){
-                e.printStackTrace();
+            Set transactions = new HashSet(listaTranzactii);
+            if(!txtNumeCont.getText().isBlank() || Integer.valueOf(txtNumeCont.getText()) < 0 || Integer.valueOf(txtNumeCont.getText()) > 99999){
+                try {
+                    DatabaseOperations op = new DatabaseOperations();
+                    for(Object tran : op.getTransactions(sqlConnection, Integer.valueOf(txtNumeCont.getText()))){
+                        transactions.add(tran);
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                listaTranzactii = transactions.stream().toList();
+                ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                transactions.clear();
             }
-            System.out.println(listaTranzactii);
-            ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
         });
     }
 

@@ -10,8 +10,8 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 public class ScreenListViewConturi extends Screen {
-    private static final int STAGE_DEFAULT_WIDTH = 600;
-    private static final int STAGE_DEFAULT_HEIGHT = 200;
+    private static final int STAGE_DEFAULT_WIDTH = 700;
+    private static final int STAGE_DEFAULT_HEIGHT = 250;
     ListView<String> listView = new ListView<>();
     List<String> listaTranzactii;
 
@@ -48,12 +48,5 @@ public class ScreenListViewConturi extends Screen {
         listView.setItems(items);
         Label label = new Label();
         label.setTextFill(Color.RED);
-        listView.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-            String selectedItem = listView.getSelectionModel().getSelectedItem();
-           new ScreenDetaliiTranzactie(selectedItem);
-        });
-
-
-
     }
 }
