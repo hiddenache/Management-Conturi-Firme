@@ -1,5 +1,6 @@
 package screens;
 
+import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -12,6 +13,7 @@ public class ScreenPopUpNumeCont extends Screen{
     private static final int STAGE_DEFAULT_HEIGHT = 150;
     private static TextArea txtNumeCont;
     private List<String> listaTranzactii=new ArrayList<>();
+
     Button btnSearch;
     public ScreenPopUpNumeCont() {
         createVBox();
@@ -33,6 +35,7 @@ public class ScreenPopUpNumeCont extends Screen{
         Label lblNume = new Label("Introduceti numarul contului:");
         txtNumeCont = new TextArea("");
         btnSearch=new Button("Cautare");
+
         vBox.getChildren().addAll(lblNume,txtNumeCont,btnSearch);
         createBtnHandlers();
     }
@@ -41,7 +44,18 @@ public class ScreenPopUpNumeCont extends Screen{
         {
             listaTranzactii.add("Tranzactia "+i);
         }
-        btnSearch.setOnMouseClicked(mouseEvent -> new ScreenListViewConturi(listaTranzactii));
+
+        btnSearch.setOnMouseClicked(mouseEvent -> {
+            try {
+                DatabaseOperations op = new DatabaseOperations();
+                listaTranzactii.add(op.getInfo2(sqlConnection, "SELECT * from tranzactie where cont_debitor='"+txtNumeCont.getText()+"'"));
+                System.out.println(op.getInfo2(sqlConnection, "SELECT * from tranzactie where cont_debitor='"+txtNumeCont.getText()+"'"));
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            System.out.println(listaTranzactii);
+            ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+        });
     }
 
 }

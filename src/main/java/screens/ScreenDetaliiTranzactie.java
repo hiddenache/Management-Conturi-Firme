@@ -8,6 +8,13 @@ public class ScreenDetaliiTranzactie extends Screen {
     private static final int STAGE_DEFAULT_HEIGHT = 600;
     private static final int TEXTAREA_HEIGHT=25;
 
+    public Label lblTranzactie;
+    public Label lblContDebitor;
+    public Label lblContCreditor;
+    public Label lblData;
+    public Label lblSuma;
+    public Label lbldescriere;
+
     public ScreenDetaliiTranzactie(String title) {
         createVBox();
         createScene();

@@ -1,5 +1,6 @@
 package databse;
 
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.sql.Connection;
@@ -19,8 +20,6 @@ public class DatabaseOperations {
      * columnLabel - coloana din baza de date de care avem nevoie pentru a retrage informatii
      */
     public String getInfo(Connection dbConnection ,String query, Label text, String columnLabel){
-
-
         try{
             Statement statement = dbConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
@@ -33,6 +32,18 @@ public class DatabaseOperations {
             e.printStackTrace();
         }
 
+        return result;
+    }
+
+    public String getInfo2(Connection dbConnection ,String query){
+        try{
+            Statement statement = dbConnection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            resultSet.close();
+            statement.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return result;
     }
 
@@ -68,5 +79,42 @@ public class DatabaseOperations {
             e.printStackTrace();
         }
             return 0;
+    }
+
+    // debitorul da, creditorul primeste
+
+    public int newTransaction(Connection dbConnection, int cont_creditor, int cont_debitor, float suma, String descriere){
+        java.util.Date javaDate = new java.util.Date();
+        java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
+
+        float soldFinalCreditor=0; // cel care primeste
+        float soldFinalDebitor=0; // cel care trimite
+
+        try{
+            Statement statement = dbConnection.createStatement();
+            //String soldContCreditor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
+            ResultSet soldContCreditor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
+            while(soldContCreditor.next()){
+                soldFinalCreditor = Float.parseFloat(soldContCreditor.getString("sold_curent")) + suma;
+            }
+            ResultSet soldContDebitor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
+            while(soldContDebitor.next()){
+                soldFinalDebitor = Float.parseFloat(soldContDebitor.getString("sold_curent")) - suma;
+            }
+
+            String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='"+soldFinalCreditor+"' where nr_cont='"+cont_creditor+"'";
+            String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='"+soldFinalDebitor+"' where nr_cont='"+cont_debitor+"'";
+
+            statement.executeUpdate(insertSoldFinalCreditor);
+            statement.executeUpdate(insertSoldFinalDebitor);
+
+            String newTransactionInfo = "INSERT into tranzactie (cont_debitor, cont_creditor, data_tranzactie, suma_tranzactie, descriere_tranzactie)" +
+                    "VALUES ('"+cont_debitor+"','"+cont_creditor+"','"+mySQLDate+"','"+suma+"','"+descriere+"')";
+
+            statement.executeUpdate(newTransactionInfo);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return 0;
     }
 }
