@@ -49,9 +49,7 @@ public class ScreenAfisareTranzactii extends Screen {
 
         });
         btnTranzactiiNumeCont.setOnMouseClicked(mouseEvent -> {
-
             new ScreenPopUpNumeCont();
-
         });
 
     }

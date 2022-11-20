@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ScreenPopUpNumeCont extends Screen{
-    private static final int STAGE_DEFAULT_WIDTH = 600;
+    private static final int STAGE_DEFAULT_WIDTH = 300;
     private static final int STAGE_DEFAULT_HEIGHT = 150;
     private static TextArea txtNumeCont;
     private List<String> listaTranzactii=new ArrayList<>();
@@ -44,19 +44,21 @@ public class ScreenPopUpNumeCont extends Screen{
 
     private void createBtnHandlers() {
         btnSearch.setOnMouseClicked(mouseEvent -> {
-            Set transactions = new HashSet(listaTranzactii);
+            Set transactions = new HashSet();
             if(!txtNumeCont.getText().isBlank() || Integer.valueOf(txtNumeCont.getText()) < 0 || Integer.valueOf(txtNumeCont.getText()) > 99999){
                 try {
                     DatabaseOperations op = new DatabaseOperations();
                     for(Object tran : op.getTransactions(sqlConnection, Integer.valueOf(txtNumeCont.getText()))){
                         transactions.add(tran);
                     }
+                    listaTranzactii = transactions.stream().toList();
+                    if(!listaTranzactii.isEmpty()){
+                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                    }
+                    transactions.clear();
                 }catch(Exception e){
                     e.printStackTrace();
                 }
-                listaTranzactii = transactions.stream().toList();
-                ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
-                transactions.clear();
             }
         });
     }

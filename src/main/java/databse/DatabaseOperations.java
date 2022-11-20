@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,116 +22,182 @@ public class DatabaseOperations {
     /**
      * Functie pentru preluarea de informatii dintr-un anumit tabel
      *
-     * @params
-     * query - comanda care trebuie sa se execute
+     * @params query - comanda care trebuie sa se execute
      * text - textul care trebuie modificat in momentul cand comanda returneaza o informatie
      * columnLabel - coloana din baza de date de care avem nevoie pentru a retrage informatii
      */
-    public String getInfo(Connection dbConnection ,String query, Label text, String columnLabel){
-        try{
+    public String getInfo(Connection dbConnection, String query, Label text, String columnLabel) {
+        try {
             Statement statement = dbConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-            while(resultSet.next()){
+            while (resultSet.next()) {
                 text.setText(resultSet.getString(columnLabel));
             }
             resultSet.close();
             statement.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    public String getInfo2(Connection dbConnection ,String query){
-        try{
+    public String getInfo2(Connection dbConnection, String query) {
+        try {
             Statement statement = dbConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             resultSet.close();
             statement.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public int deleteAccount(Connection dbConnection,String accNum){
+    public void createInformationAlert(String tip_alerta) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        String message = null;
+        switch (tip_alerta) {
+            case "TRANZACTIE":
+                alert.setTitle("TRANSACTION");
+                alert.setHeaderText("");
+                message = "Your transaction is sent successfully!";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "EMPTY":
+                Alert empty = new Alert(Alert.AlertType.ERROR);
+                empty.setTitle("ERROR");
+                empty.setHeaderText("");
+                message = "Fill out all the text boxes!";
+                empty.setContentText(message);
+                empty.show();
+                break;
+            case "ERROR":
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("ERROR");
+                error.setHeaderText("");
+                message = "An error has been ocurred!";
+                error.setContentText(message);
+                error.show();
+                break;
+            case "NOACC":
+                Alert noAcc = new Alert(Alert.AlertType.ERROR);
+                noAcc.setTitle("ERROR");
+                noAcc.setHeaderText("");
+                message = "No account found!";
+                noAcc.setContentText(message);
+                noAcc.show();
+        }
+    }
 
-        String queryOp = "DELETE from cont WHERE nr_cont='"+accNum+"'";
-        try{
+    public int deleteAccount(Connection dbConnection, String accNum) {
+
+        String queryOp = "DELETE from cont WHERE nr_cont='" + accNum + "'";
+        try {
             Statement statement = dbConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
             if (result == 1)
                 return 1;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
 
 
-    public int addAccount(Connection dbConnection,String numeCont, String descriere, String tipCont, float sold_initial){
+    public int addAccount(Connection dbConnection, String numeCont, String descriere, String tipCont, float sold_initial) {
 
         String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial)" +
-                "VALUES ('"+numeCont+"','"+descriere+"','"+tipCont+"','"+sold_initial+"')";
+                "VALUES ('" + numeCont + "','" + descriere + "','" + tipCont + "','" + sold_initial + "')";
 
-        try{
+        try {
             Statement statement = dbConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
             if (result == 1)
                 return 1;
-                //System.out.println("Contul adaugat cu succes!");
+            //System.out.println("Contul adaugat cu succes!");
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-            return 0;
+        return 0;
     }
 
     // debitorul da, creditorul primeste
 
-    public int newTransaction(Connection dbConnection, int cont_creditor, int cont_debitor, float suma, String descriere){
+    public void newTransaction(Connection dbConnection, int cont_creditor, int cont_debitor, Float suma, String descriere) {
         java.util.Date javaDate = new java.util.Date();
         java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
 
-        float soldFinalCreditor=0; // cel care primeste
-        float soldFinalDebitor=0; // cel care trimite
+        float soldFinalCreditor; // cel care primeste
+        float soldFinalDebitor; // cel care trimite
 
-        try{
+        boolean error = false;
+        try {
             Statement statement = dbConnection.createStatement();
-            ResultSet soldContCreditor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
-            ResultSet soldContDebitor = statement.executeQuery("SELECT sold_curent from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
 
-            soldFinalCreditor = Float.parseFloat(soldContCreditor.getString("sold_curent")) + suma;
+            ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
+            validate_cont.next();
+            if (Integer.valueOf(validate_cont.getString("nr_cont")) != cont_creditor || Integer.valueOf(validate_cont.getString("nr_cont")) != cont_debitor) {
+                error = true;
+            }
+            // daca nu este numar atunci eroare
+            if(!Integer.valueOf(cont_creditor).toString().matches("[0-9]+")
+                    || !Integer.valueOf(cont_debitor).toString().matches("[0-9]+")
+                    || suma < 0 || descriere.isBlank()){
+                error = true;
+            }
 
-            soldFinalDebitor = Float.parseFloat(soldContDebitor.getString("sold_curent")) - suma;
+            if(Integer.valueOf(cont_creditor).toString().isBlank()
+                    || Integer.valueOf(cont_debitor).toString().isBlank()
+                    || Float.valueOf(suma).toString().isBlank()
+                    || descriere.isBlank()){
+                error = true;
+            }
 
-            String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='"+soldFinalCreditor+"' where nr_cont='"+cont_creditor+"'";
-            String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='"+soldFinalDebitor+"' where nr_cont='"+cont_debitor+"'";
+            if(Float.valueOf(suma).isNaN()) error = true;
 
-            statement.executeUpdate(insertSoldFinalCreditor);
-            statement.executeUpdate(insertSoldFinalDebitor);
+            if(error) {createInformationAlert("ERROR");}
 
-            String newTransactionInfo = "INSERT into tranzactie (cont_debitor, cont_creditor, data_tranzactie, suma_tranzactie, descriere_tranzactie)" +
-                    "VALUES ('"+cont_debitor+"','"+cont_creditor+"','"+mySQLDate+"','"+suma+"','"+descriere+"')";
+            if(error == false){
+                ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
+                soldContCreditor.next();
+                soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
+                //System.out.println(soldContCreditor.getFloat("sold_curent"));
 
-            statement.executeUpdate(newTransactionInfo);
-        }catch (Exception e){
+                ResultSet soldContDebitor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
+                soldContDebitor.next();
+                //System.out.println(soldContDebitor.getFloat("sold_curent"));
+                soldFinalDebitor = soldContDebitor.getFloat("sold_curent") - suma;
+
+                String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='" + soldFinalCreditor + "' where nr_cont='" + cont_creditor + "'";
+                String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='" + soldFinalDebitor + "' where nr_cont='" + cont_debitor + "'";
+
+                statement.executeUpdate(insertSoldFinalCreditor);
+                statement.executeUpdate(insertSoldFinalDebitor);
+
+                String newTransactionInfo = "INSERT into tranzactie (cont_debitor, cont_creditor, data_tranzactie, suma_tranzactie, descriere_tranzactie)" +
+                        "VALUES ('" + cont_debitor + "','" + cont_creditor + "','" + mySQLDate + "','" + suma + "','" + descriere + "')";
+
+                statement.executeUpdate(newTransactionInfo);
+                error = false;
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0;
     }
 
-    public Set getTransactions(Connection dbConnection, int nr_cont){
+    public Set getTransactions(Connection dbConnection, int nr_cont) {
         String query = "SELECT * from tranzactie where cont_debitor='"+nr_cont+"'";
         Set<Transaction> transactions = new HashSet<Transaction>();
 
-        try{
+        try {
             Statement statement = dbConnection.createStatement();
             ResultSet transaction = statement.executeQuery(query);
-
-            while(transaction.next()){
+            while (transaction.next()) {
                 int cont_debitor = transaction.getInt("cont_debitor");
                 int cont_creditor = transaction.getInt("cont_creditor");
                 Date date = transaction.getDate("data_tranzactie");
@@ -140,10 +207,56 @@ public class DatabaseOperations {
                 Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
                 transactions.add(tran);
             }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
+    }
+
+    public List getTransactionsFromDateToDate(Connection dbConnection, String data_inceput, String data_sfarsit){
+        String query = "SELECT * from tranzactie";
+        LocalDate start = LocalDate.parse(data_inceput);
+        LocalDate end = LocalDate.parse(data_sfarsit);
+
+        List<LocalDate> totalDates = start.datesUntil(end).collect(Collectors.toList());
+
+        try{
+            Statement statement = dbConnection.createStatement();
+            ResultSet transaction = statement.executeQuery(query);
+            while(transaction.next()){
+
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
 
+        return totalDates;
+    }
+
+    public Set getSpecificTypeTransactions(Connection dbConnections, String tip){
+        String query = "SELECT * from cont where tip_cont='"+tip+"'";
+
+        Set<Transaction> transactions = new HashSet<Transaction>();
+        try{
+            Statement statement = dbConnections.createStatement();
+            ResultSet transaction = statement.executeQuery(query);
+
+            while (transaction.next()) {
+                int cont_debitor = transaction.getInt("cont_debitor");
+                int cont_creditor = transaction.getInt("cont_creditor");
+                Date date = transaction.getDate("data_tranzactie");
+                float suma = transaction.getFloat("suma_tranzactie");
+                String descriere = transaction.getString("descriere_tranzactie");
+
+                Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+                transactions.add(tran);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return transactions;
     }
 }

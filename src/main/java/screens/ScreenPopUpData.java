@@ -1,5 +1,6 @@
 package screens;
 
+import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -49,10 +50,11 @@ public class ScreenPopUpData extends Screen{
         createBtnHandlers();
     }
     private void createBtnHandlers() {
-        for(int i=0;i<15;i+=2)
-        {
-            listaTranzactii.add("Tranzactia "+i);
-        }
-        btnSearch.setOnMouseClicked(mouseEvent -> new ScreenListViewConturi(listaTranzactii));
+
+        btnSearch.setOnMouseClicked(mouseEvent -> {
+            DatabaseOperations op = new DatabaseOperations();
+            System.out.println(op.getTransactionsFromDateToDate(sqlConnection, "2022-11-17", "2022-11-19"));
+            new ScreenListViewConturi(listaTranzactii);
+        });
     }
 }

@@ -19,6 +19,6 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction => " + " FROM=" + cont_debitor + " | TO=" + cont_creditor + " | TRANSACTION DATE=" + data_tranzactie + " | AMOUNT=" + suma_tranzactie + "$ | DETAILS=" + descriere;
+        return "Transaction: " + " FROM ACCOUNT ID=" + cont_debitor + " => TO=" + cont_creditor + " | TRANSACTION DATE=" + data_tranzactie + " | AMOUNT=" + suma_tranzactie + "$ | DETAILS=" + descriere;
     }
 }

@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 import java.util.List;
 
 public class ScreenListViewConturi extends Screen {
-    private static final int STAGE_DEFAULT_WIDTH = 700;
+    private static final int STAGE_DEFAULT_WIDTH = 750;
     private static final int STAGE_DEFAULT_HEIGHT = 250;
     ListView<String> listView = new ListView<>();
     List<String> listaTranzactii;
