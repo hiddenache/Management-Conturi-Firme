@@ -3,21 +3,21 @@ package databse;
 import Storage.Transaction;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import screens.Screen;
 
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DatabaseOperations {
 
     private String result;
+
+    protected static Connection sqlConnection ;
 
     /**
      * Functie pentru preluarea de informatii dintr-un anumit tabel
@@ -191,7 +191,7 @@ public class DatabaseOperations {
     }
 
     public Set getTransactions(Connection dbConnection, int nr_cont) {
-        String query = "SELECT * from tranzactie where cont_debitor='"+nr_cont+"'";
+        String query = "SELECT * from tranzactie where cont_debitor='"+nr_cont+"' or cont_creditor='"+nr_cont+"'";
         Set<Transaction> transactions = new HashSet<Transaction>();
 
         try {
@@ -235,28 +235,36 @@ public class DatabaseOperations {
         return totalDates;
     }
 
-    public Set getSpecificTypeTransactions(Connection dbConnections, String tip){
-        String query = "SELECT * from cont where tip_cont='"+tip+"'";
+    public List getSpecificTypeTransactions(Connection dbConnections, String tip){
+        String getAccounts = "SELECT * from cont where tip_cont='"+tip+"'";
 
-        Set<Transaction> transactions = new HashSet<Transaction>();
+        List transactions = new ArrayList();
+        List<String> accountsTypes = new ArrayList<>();
+        List<Integer> accountNumbers = new ArrayList<>();
         try{
             Statement statement = dbConnections.createStatement();
-            ResultSet transaction = statement.executeQuery(query);
+            ResultSet getAccountsFromDB = statement.executeQuery(getAccounts);
 
-            while (transaction.next()) {
-                int cont_debitor = transaction.getInt("cont_debitor");
-                int cont_creditor = transaction.getInt("cont_creditor");
-                Date date = transaction.getDate("data_tranzactie");
-                float suma = transaction.getFloat("suma_tranzactie");
-                String descriere = transaction.getString("descriere_tranzactie");
+            int nr_cont;
+            while (getAccountsFromDB.next()) {
+                String tip_cont = getAccountsFromDB.getString("tip_cont");
+                nr_cont = getAccountsFromDB.getInt("nr_cont");
 
-                Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
-                transactions.add(tran);
+                //Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+                accountsTypes.add(tip_cont);
+                accountNumbers.add(nr_cont);
+            }
+
+            for(Integer accNumber : accountNumbers){
+                ResultSet transaction = statement.executeQuery("SELECT * from tranzactie where cont_debitor='"+accNumber+"' or cont_creditor='"+accNumber+"'");
+                while(transaction.next()){
+                    accountNumbers.add(accNumber);
+                }
             }
 
         }catch (Exception e){
             e.printStackTrace();
         }
-        return transactions;
+        return accountNumbers;
     }
 }
