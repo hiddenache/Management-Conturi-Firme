@@ -7,7 +7,9 @@ import javafx.scene.control.Label;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ScreenPopUpData extends Screen{
@@ -47,14 +49,26 @@ public class ScreenPopUpData extends Screen{
 
         btnSearch=new Button("Cautare");
         vBox.getChildren().addAll(lblFirstDate,firstDatePicker,lblLastDate,lastDatePicker,btnSearch);
-        createBtnHandlers();
-    }
-    private void createBtnHandlers() {
-
+        Set transactions = new HashSet();
         btnSearch.setOnMouseClicked(mouseEvent -> {
-            DatabaseOperations op = new DatabaseOperations();
-            System.out.println(op.getTransactionsFromDateToDate(sqlConnection, "2022-11-17", "2022-11-19"));
-            new ScreenListViewConturi(listaTranzactii);
+            try{
+                DatabaseOperations op = new DatabaseOperations();
+                if(!(firstDatePicker.getValue() == null) || (lastDatePicker.getValue() == null)){
+                    for(Object tran : op.getTransactionsFromDateToDate(sqlConnection, firstDatePicker.getValue(), lastDatePicker.getValue())){
+                        transactions.add(tran);
+                    }
+                    listaTranzactii = transactions.stream().toList();
+                    if(!listaTranzactii.isEmpty()){
+                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                    }
+                    transactions.clear();
+                }
+                else{
+                    System.out.println("Selectati o data");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         });
     }
 }

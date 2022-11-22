@@ -215,24 +215,31 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public List getTransactionsFromDateToDate(Connection dbConnection, String data_inceput, String data_sfarsit){
+    public Set getTransactionsFromDateToDate(Connection dbConnection, LocalDate data_inceput, LocalDate data_sfarsit){
         String query = "SELECT * from tranzactie";
-        LocalDate start = LocalDate.parse(data_inceput);
-        LocalDate end = LocalDate.parse(data_sfarsit);
+        LocalDate start = data_inceput;
+        LocalDate end = data_sfarsit;
 
-        List<LocalDate> totalDates = start.datesUntil(end).collect(Collectors.toList());
+        Set<Transaction> transactions = new HashSet<Transaction>();
 
         try{
             Statement statement = dbConnection.createStatement();
-            ResultSet transaction = statement.executeQuery(query);
-            while(transaction.next()){
+            ResultSet getDatesBetweenStartEnd = statement.executeQuery("SELECT * from tranzactie where data_tranzactie BETWEEN '"+data_inceput+"' and '"+data_sfarsit+"' order by data_tranzactie DESC");
+            while(getDatesBetweenStartEnd.next()){
+                int cont_debitor = getDatesBetweenStartEnd.getInt("cont_debitor");
+                int cont_creditor = getDatesBetweenStartEnd.getInt("cont_creditor");
+                Date date = getDatesBetweenStartEnd.getDate("data_tranzactie");
+                float suma = getDatesBetweenStartEnd.getFloat("suma_tranzactie");
+                String descriere = getDatesBetweenStartEnd.getString("descriere_tranzactie");
 
+                Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+                transactions.add(tran);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
-        return totalDates;
+        return transactions;
     }
 
     public List getSpecificTypeTransactions(Connection dbConnections, String tip){
