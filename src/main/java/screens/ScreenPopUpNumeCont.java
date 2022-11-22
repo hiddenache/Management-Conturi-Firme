@@ -55,6 +55,7 @@ public class ScreenPopUpNumeCont extends Screen{
                     if(!listaTranzactii.isEmpty()){
                         ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
                     }
+                    listaTranzactii.clear();
                     transactions.clear();
                 }catch(Exception e){
                     e.printStackTrace();

@@ -42,7 +42,7 @@ public class ScreenTranzactieNoua extends Screen {
 
         btnTransfer.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-            op.newTransaction(sqlConnection, Integer.valueOf(txtContCreditor.getText()), Integer.valueOf(txtContDebitor.getText()), Float.valueOf(txtSuma.getText()), txtDescriere.getText());
+            op.newTransaction(sqlConnection, Integer.valueOf(txtContCreditor.getText().trim()), Integer.valueOf(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
         });
 
     }

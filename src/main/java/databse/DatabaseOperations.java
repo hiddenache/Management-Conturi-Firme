@@ -17,7 +17,7 @@ public class DatabaseOperations {
 
     private String result;
 
-    protected static Connection sqlConnection ;
+    protected static Connection sqlConnection;
 
     /**
      * Functie pentru preluarea de informatii dintr-un anumit tabel
@@ -109,8 +109,8 @@ public class DatabaseOperations {
 
     public int addAccount(Connection dbConnection, String numeCont, String descriere, String tipCont, float sold_initial) {
 
-        String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial)" +
-                "VALUES ('" + numeCont + "','" + descriere + "','" + tipCont + "','" + sold_initial + "')";
+        String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial, sold_curent)" +
+                "VALUES ('" + numeCont + "','" + descriere + "','" + tipCont + "','" + sold_initial + "', '" + sold_initial + "')";
 
         try {
             Statement statement = dbConnection.createStatement();
@@ -139,29 +139,24 @@ public class DatabaseOperations {
             Statement statement = dbConnection.createStatement();
 
             ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
-            validate_cont.next();
-            if (Integer.valueOf(validate_cont.getString("nr_cont")) != cont_creditor || Integer.valueOf(validate_cont.getString("nr_cont")) != cont_debitor) {
-                error = true;
-            }
+
             // daca nu este numar atunci eroare
-            if(!Integer.valueOf(cont_creditor).toString().matches("[0-9]+")
+            if (!Integer.valueOf(cont_creditor).toString().matches("[0-9]+")
                     || !Integer.valueOf(cont_debitor).toString().matches("[0-9]+")
-                    || suma < 0 || descriere.isBlank()){
+                    || suma < 0 || descriere.isBlank()) {
                 error = true;
             }
 
-            if(Integer.valueOf(cont_creditor).toString().isBlank()
+            if (Integer.valueOf(cont_creditor).toString().isBlank()
                     || Integer.valueOf(cont_debitor).toString().isBlank()
                     || Float.valueOf(suma).toString().isBlank()
-                    || descriere.isBlank()){
+                    || descriere.isBlank()) {
                 error = true;
             }
 
-            if(Float.valueOf(suma).isNaN()) error = true;
+            if (Float.valueOf(suma).isNaN()) error = true;
 
-            if(error) {createInformationAlert("ERROR");}
-
-            if(error == false){
+            if (error == false) {
                 ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
                 soldContCreditor.next();
                 soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
@@ -185,13 +180,17 @@ public class DatabaseOperations {
                 error = false;
             }
 
+            if (error) {
+                createInformationAlert("ERROR");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public Set getTransactions(Connection dbConnection, int nr_cont) {
-        String query = "SELECT * from tranzactie where cont_debitor='"+nr_cont+"' or cont_creditor='"+nr_cont+"'";
+        String query = "SELECT * from tranzactie where cont_debitor='" + nr_cont + "' or cont_creditor='" + nr_cont + "'";
         Set<Transaction> transactions = new HashSet<Transaction>();
 
         try {
@@ -215,17 +214,17 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public Set getTransactionsFromDateToDate(Connection dbConnection, LocalDate data_inceput, LocalDate data_sfarsit){
+    public Set getTransactionsFromDateToDate(Connection dbConnection, LocalDate data_inceput, LocalDate data_sfarsit) {
         String query = "SELECT * from tranzactie";
         LocalDate start = data_inceput;
         LocalDate end = data_sfarsit;
 
         Set<Transaction> transactions = new HashSet<Transaction>();
 
-        try{
+        try {
             Statement statement = dbConnection.createStatement();
-            ResultSet getDatesBetweenStartEnd = statement.executeQuery("SELECT * from tranzactie where data_tranzactie BETWEEN '"+data_inceput+"' and '"+data_sfarsit+"' order by data_tranzactie DESC");
-            while(getDatesBetweenStartEnd.next()){
+            ResultSet getDatesBetweenStartEnd = statement.executeQuery("SELECT * from tranzactie where data_tranzactie BETWEEN '" + data_inceput + "' and '" + data_sfarsit + "' order by data_tranzactie DESC");
+            while (getDatesBetweenStartEnd.next()) {
                 int cont_debitor = getDatesBetweenStartEnd.getInt("cont_debitor");
                 int cont_creditor = getDatesBetweenStartEnd.getInt("cont_creditor");
                 Date date = getDatesBetweenStartEnd.getDate("data_tranzactie");
@@ -235,20 +234,20 @@ public class DatabaseOperations {
                 Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
                 transactions.add(tran);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return transactions;
     }
 
-    public List getSpecificTypeTransactions(Connection dbConnections, String tip){
-        String getAccounts = "SELECT * from cont where tip_cont='"+tip+"'";
+    public List getSpecificTypeTransactions(Connection dbConnections, String tip) {
+        String getAccounts = "SELECT * from cont where tip_cont='" + tip + "'";
 
         List transactions = new ArrayList();
         List<String> accountsTypes = new ArrayList<>();
         List<Integer> accountNumbers = new ArrayList<>();
-        try{
+        try {
             Statement statement = dbConnections.createStatement();
             ResultSet getAccountsFromDB = statement.executeQuery(getAccounts);
 
@@ -262,14 +261,14 @@ public class DatabaseOperations {
                 accountNumbers.add(nr_cont);
             }
 
-            for(Integer accNumber : accountNumbers){
-                ResultSet transaction = statement.executeQuery("SELECT * from tranzactie where cont_debitor='"+accNumber+"' or cont_creditor='"+accNumber+"'");
-                while(transaction.next()){
+            for (Integer accNumber : accountNumbers) {
+                ResultSet transaction = statement.executeQuery("SELECT * from tranzactie where cont_debitor='" + accNumber + "' or cont_creditor='" + accNumber + "'");
+                while (transaction.next()) {
                     accountNumbers.add(accNumber);
                 }
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return accountNumbers;
