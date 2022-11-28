@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static screens.Screen.sqlConnection;
+
 public class DatabaseOperations {
 
     private String result;
@@ -272,5 +274,45 @@ public class DatabaseOperations {
             e.printStackTrace();
         }
         return accountNumbers;
+    }
+    public Set getBestAccount(Connection dbConnection){
+        //SELECT COUNT(`cont_debitor`) FROM `tranzactie` GROUP BY `cont_debitor`;
+        String query = "SELECT *, COUNT(*) from tranzactie group by cont_debitor";
+        Set<Transaction> transactions = new HashSet<Transaction>();
+        ArrayList<Integer> transactionsNumber = new ArrayList<Integer>();
+        try {
+            Statement statement = dbConnection.createStatement();
+            ResultSet transaction = statement.executeQuery(query);
+            int cont_debitorMax = -1;
+            int cont_debitor = -1;
+            int count = -1;
+            int countMax = -1;
+            while (transaction.next()) {
+                cont_debitor = transaction.getInt("cont_debitor");
+                count = transaction.getInt("COUNT(*)");
+
+                if(count > countMax){
+                    countMax = count;
+                    cont_debitorMax = cont_debitor;
+                }
+
+//                int cont_creditor = transaction.getInt("cont_creditor");
+//                Date date = transaction.getDate("data_tranzactie");
+//                float suma = transaction.getFloat("suma_tranzactie");
+//                String descriere = transaction.getString("descriere_tranzactie");
+//
+//                Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+//                transactions.add(tran);
+//                transactionsNumber.add(transaction.getInt());
+            }
+
+            System.out.println("CONT = " + cont_debitorMax);
+            System.out.println( "COUNT = " + countMax);
+            System.out.println(getTransactions(sqlConnection, cont_debitorMax));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return transactions;
     }
 }

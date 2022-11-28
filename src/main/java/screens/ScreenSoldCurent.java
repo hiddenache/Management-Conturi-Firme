@@ -43,7 +43,7 @@ public class ScreenSoldCurent extends Screen {
             try {
                 DatabaseOperations op = new DatabaseOperations();
                 op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
-                System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
+                //System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
             }catch(Exception e){
                 e.printStackTrace();
             }

@@ -16,7 +16,7 @@ public abstract class Screen {
     protected VBox vBox;
     protected Scene scene;
     protected Stage stage;
-    protected static Connection sqlConnection ;
+    public static Connection sqlConnection ;
 
     public Screen() {
         sqlConnection = getConnection().orElse(null);

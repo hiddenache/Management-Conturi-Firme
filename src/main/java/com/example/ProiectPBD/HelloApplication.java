@@ -1,9 +1,11 @@
 package com.example.ProiectPBD;
 
 import databse.DatabaseManager;
+import databse.DatabaseOperations;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -12,8 +14,11 @@ import screens.*;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+
+import static screens.Screen.sqlConnection;
 
 public class HelloApplication extends Application {
     private final VBox root = new VBox(10);
@@ -23,6 +28,7 @@ public class HelloApplication extends Application {
     private static final int BUTTOW_HEIGHT=25;
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
    private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont,btnBestAccount;
+
     @Override
     public void start(Stage stage) {
 
@@ -68,11 +74,12 @@ public class HelloApplication extends Application {
         btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent());
         btnCalculareBilant.setOnMouseClicked(mouseEvent -> new ScreenBilant());
         List<String> listaTranzactii=new ArrayList<>();
-        for(int i=0;i<15;i+=2)
-        {
-            listaTranzactii.add("Tranzactia "+i);
-        }
-        btnBestAccount.setOnMouseClicked(mouseEvent -> new ScreenListViewConturi(listaTranzactii));
+        btnBestAccount.setOnMouseClicked(mouseEvent -> {
+            DatabaseOperations op = new DatabaseOperations();
+            System.out.println(op.getBestAccount(sqlConnection));
+//
+            new ScreenListViewConturi(listaTranzactii);
+        });
     }
 
 
