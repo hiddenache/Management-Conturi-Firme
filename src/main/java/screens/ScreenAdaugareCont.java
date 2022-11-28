@@ -5,6 +5,9 @@ import databse.DatabaseOperations;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class ScreenAdaugareCont extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 600;
@@ -44,19 +47,27 @@ public class ScreenAdaugareCont extends Screen {
         Label lblSold = new Label("Sold initial");
         vBox.getChildren().addAll(lblNume, txtNumarCont, lblDescriere, txtDescriere, lblTipCont, choiceBox, lblSold, txtSoldInitial, btnAdaugare);
 
-        /*
-         *  The conditions will be added soon
-         *  txtNumeCont should not be NULL
-         *  txtSoldInitail should not be NULL or invalid(ex. -1244$)
-         *  etc...
-         */
+        Pattern pattern = Pattern.compile("[0-9+]");
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
             //   sqlConnection=getConnection().orElse(null);
-            if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
-                    choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1)
-                createInformationAlert(txtNumarCont.getText());
-            else createErrorAllert(txtNumarCont.getText());
+            Matcher matcher = pattern.matcher(txtSoldInitial.getText()); // doar cifre
+            if(txtNumarCont.getText().isEmpty()
+                    || txtDescriere.getText().isEmpty()
+                    || choiceBox.getSelectionModel().getSelectedItem() == null
+                    || txtSoldInitial.getText().isEmpty()
+                    || !matcher.find()){
+               System.out.println("Nu s-a putut crea contul. Veirificati campurile si incercati din nou!");
+            } else{
+                if(Float.parseFloat(txtSoldInitial.getText()) < 0){
+                    System.out.println("Soldul initial nu poate sa fie negativ!");
+                } else {
+                    if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
+                            choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1)
+                        createInformationAlert(txtNumarCont.getText());
+                    else createErrorAllert(txtNumarCont.getText());
+                }
+            }
         });
     }
     private void createInformationAlert(String accNum)
