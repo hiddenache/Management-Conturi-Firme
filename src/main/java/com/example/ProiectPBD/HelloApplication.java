@@ -13,10 +13,7 @@ import javafx.stage.Stage;
 import screens.*;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static screens.Screen.sqlConnection;
 
@@ -66,6 +63,7 @@ public class HelloApplication extends Application {
         /* ------------------------------------------------------ Handlers ----------------------------------------------------- */
 
     }
+    private List<String> listaTranzactii=new ArrayList<>();
     private void createBtnHandlers() {
         btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont());
         btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua());
@@ -73,12 +71,22 @@ public class HelloApplication extends Application {
         btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii());
         btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent());
         btnCalculareBilant.setOnMouseClicked(mouseEvent -> new ScreenBilant());
-        List<String> listaTranzactii=new ArrayList<>();
+        Set transactions = new HashSet();
         btnBestAccount.setOnMouseClicked(mouseEvent -> {
+            listaTranzactii.clear();
             DatabaseOperations op = new DatabaseOperations();
-            System.out.println(op.getBestAccount(sqlConnection));
-//
-            new ScreenListViewConturi(listaTranzactii);
+            System.out.println(op.getBestAccount());
+
+            for(Object tran : op.getBestAccount()){
+                transactions.add(tran);
+            }
+
+            listaTranzactii = transactions.stream().toList();
+
+            if(!listaTranzactii.isEmpty()){
+                ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+            }
+            transactions.clear();
         });
     }
 

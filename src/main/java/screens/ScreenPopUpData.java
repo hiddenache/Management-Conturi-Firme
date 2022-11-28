@@ -53,7 +53,7 @@ public class ScreenPopUpData extends Screen{
         btnSearch.setOnMouseClicked(mouseEvent -> {
             try{
                 DatabaseOperations op = new DatabaseOperations();
-                if(!(firstDatePicker.getValue() == null) || (lastDatePicker.getValue() == null)){
+                if(!(firstDatePicker.getValue() == null) || !(lastDatePicker.getValue() == null)){
                     for(Object tran : op.getTransactionsFromDateToDate(sqlConnection, firstDatePicker.getValue(), lastDatePicker.getValue())){
                         transactions.add(tran);
                     }
