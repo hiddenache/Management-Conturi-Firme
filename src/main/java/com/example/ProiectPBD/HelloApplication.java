@@ -1,11 +1,10 @@
 package com.example.ProiectPBD;
 
-import databse.DatabaseManager;
-import databse.DatabaseOperations;
+import database.DatabaseManager;
+import database.DatabaseOperations;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
@@ -14,8 +13,16 @@ import screens.*;
 
 import java.sql.Connection;
 import java.util.*;
+//TODO
+/*
+  -----------------------
+  verificari screen sold curent
+  verificari screen tranzactie noua
+  verificari screenuri afisare tranzactii
+  verificari conturi cu cele mai multe tranzactii (afisare mesaj daca nu exista niciun cont | mai multe conturi au acelasi nr de tranzactii);
 
-import static screens.Screen.sqlConnection;
+  -----------------------
+*/
 
 public class HelloApplication extends Application {
     private final VBox root = new VBox(10);

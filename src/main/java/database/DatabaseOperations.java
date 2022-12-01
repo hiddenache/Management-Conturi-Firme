@@ -1,9 +1,9 @@
-package databse;
+package database;
 
 import Storage.Transaction;
+import com.example.Otherss.Alertt;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import screens.Screen;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -11,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DatabaseOperations {
 
@@ -54,54 +53,7 @@ public class DatabaseOperations {
         return result;
     }
 
-    public String getInfo2(Connection dbConnection, String query) {
-        try {
-            Statement statement = dbConnection.createStatement();
-            ResultSet resultSet = statement.executeQuery(query);
-            resultSet.close();
-            statement.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 
-    public void createInformationAlert(String tip_alerta) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        String message = null;
-        switch (tip_alerta) {
-            case "TRANZACTIE":
-                alert.setTitle("TRANSACTION");
-                alert.setHeaderText("");
-                message = "Your transaction is sent successfully!";
-                alert.setContentText(message);
-                alert.show();
-                break;
-            case "EMPTY":
-                Alert empty = new Alert(Alert.AlertType.ERROR);
-                empty.setTitle("ERROR");
-                empty.setHeaderText("");
-                message = "Fill out all the text boxes!";
-                empty.setContentText(message);
-                empty.show();
-                break;
-            case "ERROR":
-                Alert error = new Alert(Alert.AlertType.ERROR);
-                error.setTitle("ERROR");
-                error.setHeaderText("");
-                message = "An error has been ocurred!";
-                error.setContentText(message);
-                error.show();
-                break;
-            case "NOACC":
-                Alert noAcc = new Alert(Alert.AlertType.ERROR);
-                noAcc.setTitle("ERROR");
-                noAcc.setHeaderText("");
-                message = "No account found!";
-                noAcc.setContentText(message);
-                noAcc.show();
-        }
-    }
 
     public int deleteAccount(Connection dbConnection, String accNum) {
 
@@ -193,7 +145,8 @@ public class DatabaseOperations {
             }
 
             if (error) {
-                createInformationAlert("ERROR");
+                Alertt alertt=new Alertt();
+                alertt.createInformationAlert("ERROR");
             }
 
         } catch (Exception e) {

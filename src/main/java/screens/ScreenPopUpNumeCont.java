@@ -1,10 +1,9 @@
 package screens;
 
-import databse.DatabaseOperations;
+import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,7 +47,7 @@ public class ScreenPopUpNumeCont extends Screen{
     private void createBtnHandlers() {
         btnSearch.setOnMouseClicked(mouseEvent -> {
             Set transactions = new HashSet();
-            if(!txtNumeCont.getText().isBlank() || Integer.valueOf(txtNumeCont.getText()) < 0 || Integer.valueOf(txtNumeCont.getText()) > 99999){
+            if(!txtNumeCont.getText().isBlank() || Integer.parseInt(txtNumeCont.getText()) < 0 || Integer.parseInt(txtNumeCont.getText()) > 99999){
                 try {
                     DatabaseOperations op = new DatabaseOperations();
                     for(Object tran : op.getTransactions(sqlConnection, Integer.valueOf(txtNumeCont.getText()))){
@@ -56,7 +55,7 @@ public class ScreenPopUpNumeCont extends Screen{
                     }
                     listaTranzactii = transactions.stream().toList();
                     if(!listaTranzactii.isEmpty()){
-                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                         new ScreenListViewConturi(listaTranzactii);
                     }
                     listaTranzactii.clear();
                     transactions.clear();

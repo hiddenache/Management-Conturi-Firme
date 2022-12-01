@@ -1,10 +1,9 @@
 package screens;
 
 
-import databse.DatabaseOperations;
+import database.DatabaseOperations;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,36 +58,19 @@ public class ScreenAdaugareCont extends Screen {
                     || txtDescriere.getText().isEmpty()
                     || choiceBox.getSelectionModel().getSelectedItem() == null
                     || txtSoldInitial.getText().isEmpty()
-                    || !matcher.find()){
-                createErrorAllert("Nu s-a putut crea contul. Veirificati campurile si incercati din nou!");
-            } else{
-                if(Float.parseFloat(txtSoldInitial.getText()) < 0){
-                    createErrorAllert("Soldul initial nu poate sa fie negativ!");
-                } else {
+                    || !matcher.find()
+                    ||Float.parseFloat(txtSoldInitial.getText()) < 0)
+                alertt.createInformationAlert("ERROR");
+             else{
                     if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
-                            choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1)
-                        createInformationAlert(txtNumarCont.getText());
-                    else createErrorAllert("Nu s-a putut crea contul");
+                            choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1) {
+                       alertt.createInformationAlert("SUCCES");
+                        stage.hide();
+                    }
+                    else alertt.createInformationAlert("ERROR");
                 }
-            }
-        });
-    }
-    private void createInformationAlert(String accNum)
-    {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Adaugare cont ");
-        alert.setHeaderText("");
-        String message ="Contul cu numarul " + accNum + " a fost adaugat cu succes!";
-        alert.setContentText(message);
-        alert.show();
-    }
-    private void createErrorAllert(String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Eroare  ");
-        alert.setHeaderText("");
-        alert.setContentText(message);
-        alert.show();
 
+        });
     }
 
 }

@@ -1,19 +1,15 @@
 package screens;
 
-import databse.DatabaseOperations;
+import database.DatabaseOperations;
 import javafx.collections.FXCollections;
-import javafx.scene.AccessibleRole;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 
-import java.nio.file.spi.FileSystemProvider;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ScreenAfisareTranzactiiTipCont extends  Screen {
     private static final int  STAGE_DEFAULT_WIDTH=300;

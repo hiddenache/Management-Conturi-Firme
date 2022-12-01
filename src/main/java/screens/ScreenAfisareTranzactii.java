@@ -1,8 +1,6 @@
 package screens;
 
-import databse.DatabaseOperations;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;

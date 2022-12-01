@@ -1,17 +1,15 @@
 package screens;
 
-import databse.DatabaseOperations;
+import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ScreenPopUpData extends Screen{
     private static final int STAGE_DEFAULT_WIDTH = 600;

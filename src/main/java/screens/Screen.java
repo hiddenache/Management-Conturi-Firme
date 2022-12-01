@@ -1,7 +1,7 @@
 package screens;
 
-import databse.DatabaseManager;
-import javafx.application.Application;
+import com.example.Otherss.Alertt;
+import database.DatabaseManager;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -18,6 +18,7 @@ public abstract class Screen {
     protected Scene scene;
     protected Stage stage;
     public static Connection sqlConnection ;
+    protected static Alertt alertt=new Alertt();
 
     public Screen() {
         sqlConnection = getConnection().orElse(null);

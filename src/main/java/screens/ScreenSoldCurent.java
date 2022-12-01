@@ -1,10 +1,9 @@
 package screens;
 
-import databse.DatabaseOperations;
+import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 
 public class ScreenSoldCurent extends Screen {
 

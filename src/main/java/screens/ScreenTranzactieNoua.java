@@ -1,11 +1,9 @@
 package screens;
 
-import databse.DatabaseOperations;
-import javafx.scene.control.Alert;
+import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.stage.Stage;
 
 public class ScreenTranzactieNoua extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
@@ -46,7 +44,8 @@ public class ScreenTranzactieNoua extends Screen {
 
         btnTransfer.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations();
-            op.newTransaction(sqlConnection, Integer.valueOf(txtContCreditor.getText().trim()), Integer.valueOf(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+            op.newTransaction(sqlConnection, Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+            stage.hide();
         });
 
     }
