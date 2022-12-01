@@ -288,8 +288,6 @@ public class DatabaseOperations {
     public Set getBestAccount(){
         //SELECT COUNT(`cont_debitor`) FROM `tranzactie` GROUP BY `cont_debitor`;
         String query = "SELECT *, COUNT(*) from tranzactie group by cont_debitor";
-        Set<Transaction> transactions = new HashSet<Transaction>();
-        ArrayList<Integer> transactionsNumber = new ArrayList<Integer>();
         int cont_debitorMax = -1;
         try {
             Statement statement = sqlConnection.createStatement();

@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
 import java.util.List;
 
@@ -49,4 +50,6 @@ public class ScreenListViewConturi extends Screen {
         Label label = new Label();
         label.setTextFill(Color.RED);
     }
+
+
 }

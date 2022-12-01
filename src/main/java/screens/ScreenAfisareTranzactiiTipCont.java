@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 import java.nio.file.spi.FileSystemProvider;
 import java.sql.ResultSet;
@@ -32,6 +33,9 @@ public class ScreenAfisareTranzactiiTipCont extends  Screen {
         vBox.setSpacing(40);
         stage.show();
     }
+
+
+
     protected void createStage(){
         super.createStage(STAGE_DEFAULT_WIDTH,STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("Afisare tranzactii");

@@ -5,5 +5,8 @@ module com.example.demo {
 
 
     opens com.example.ProiectPBD to javafx.fxml;
+    opens com.example.Otherss to javafx.base;
     exports com.example.ProiectPBD;
+
+
 }

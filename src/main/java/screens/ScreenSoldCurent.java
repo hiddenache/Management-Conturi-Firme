@@ -4,6 +4,7 @@ import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 public class ScreenSoldCurent extends Screen {
 
@@ -23,6 +24,8 @@ public class ScreenSoldCurent extends Screen {
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
+
+
 
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);

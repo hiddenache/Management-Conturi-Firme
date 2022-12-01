@@ -1,5 +1,7 @@
 package screens;
 
+
+import com.example.Otherss.Suma;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,19 +19,13 @@ public class ScreenBilant extends Screen {
         createControls();
         vBox.prefHeightProperty().bind(stage.heightProperty());
         vBox.prefWidthProperty().bind(stage.widthProperty());
-        stage.show();
+        this.stage.show();
     }
+
 
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("");
-
-
-    }
-    private void configureTable(){
-
-
-
 
 
     }
@@ -59,4 +55,6 @@ public class ScreenBilant extends Screen {
 
 
     }
+
+
 }

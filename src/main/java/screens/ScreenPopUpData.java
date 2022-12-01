@@ -4,6 +4,7 @@ import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,6 +29,8 @@ public class ScreenPopUpData extends Screen{
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
+
+
 
 
     protected void createStage() {

@@ -4,6 +4,7 @@ package screens;
 import databse.DatabaseOperations;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,8 @@ public class ScreenAdaugareCont extends Screen {
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
+
+
 
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
@@ -57,15 +60,15 @@ public class ScreenAdaugareCont extends Screen {
                     || choiceBox.getSelectionModel().getSelectedItem() == null
                     || txtSoldInitial.getText().isEmpty()
                     || !matcher.find()){
-               System.out.println("Nu s-a putut crea contul. Veirificati campurile si incercati din nou!");
+                createErrorAllert("Nu s-a putut crea contul. Veirificati campurile si incercati din nou!");
             } else{
                 if(Float.parseFloat(txtSoldInitial.getText()) < 0){
-                    System.out.println("Soldul initial nu poate sa fie negativ!");
+                    createErrorAllert("Soldul initial nu poate sa fie negativ!");
                 } else {
                     if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
                             choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1)
                         createInformationAlert(txtNumarCont.getText());
-                    else createErrorAllert(txtNumarCont.getText());
+                    else createErrorAllert("Nu s-a putut crea contul");
                 }
             }
         });
@@ -79,11 +82,10 @@ public class ScreenAdaugareCont extends Screen {
         alert.setContentText(message);
         alert.show();
     }
-    private void createErrorAllert(String accNum){
+    private void createErrorAllert(String message){
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Eroare adaugare  cont "+ accNum);
+        alert.setTitle("Eroare  ");
         alert.setHeaderText("");
-        String message ="Contul cu numarul " + accNum + "nu a putut fi adaugat";
         alert.setContentText(message);
         alert.show();
 

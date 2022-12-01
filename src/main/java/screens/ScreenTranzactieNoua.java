@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 public class ScreenTranzactieNoua extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
@@ -20,6 +21,9 @@ public class ScreenTranzactieNoua extends Screen {
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
+
+
+
     protected void createStage(){
         super.createStage(STAGE_DEFAULT_WIDTH,STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("Tranzactie Noua");

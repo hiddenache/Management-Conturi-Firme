@@ -9,6 +9,7 @@ public class Transaction {
     private float suma_tranzactie;
     private String descriere;
 
+
     public Transaction( int cont_debitor, int cont_creditor, Date data_tranzactie, float suma_tranzactie, String descriere) {
         this.cont_debitor = cont_debitor;
         this.cont_creditor = cont_creditor;

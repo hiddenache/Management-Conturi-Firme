@@ -2,6 +2,7 @@ package screens;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 public class ScreenDetaliiTranzactie extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
@@ -54,4 +55,6 @@ public class ScreenDetaliiTranzactie extends Screen {
 
 
     }
+
+
 }

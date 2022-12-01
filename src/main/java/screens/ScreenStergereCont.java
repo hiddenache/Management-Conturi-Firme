@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 public class ScreenStergereCont extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
@@ -20,6 +21,8 @@ public class ScreenStergereCont extends Screen {
         stage.show();
 
     }
+
+
 
     private static TextArea txtCont;
 

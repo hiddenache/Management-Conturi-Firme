@@ -2,6 +2,7 @@ package screens;
 
 import databse.DatabaseOperations;
 import javafx.scene.control.Button;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,8 @@ public class ScreenAfisareTranzactii extends Screen {
 
         stage.show();
     }
+
+
 
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);

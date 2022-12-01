@@ -4,6 +4,7 @@ import databse.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,6 +27,8 @@ public class ScreenPopUpNumeCont extends Screen{
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
+
+
 
 
     protected void createStage() {

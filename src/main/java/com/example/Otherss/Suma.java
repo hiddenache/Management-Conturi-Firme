@@ -1,6 +1,6 @@
-package screens;
+package com.example.Otherss;
 
-public class Suma {
+public  class Suma {
     private  String numarCont;
     private float bilantInitial;
     private  float sumaCreditoare;
