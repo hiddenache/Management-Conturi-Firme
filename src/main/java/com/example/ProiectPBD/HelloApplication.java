@@ -1,5 +1,6 @@
 package com.example.ProiectPBD;
 
+import com.example.Otherss.Alertt;
 import database.DatabaseManager;
 import database.DatabaseOperations;
 import javafx.application.Application;
@@ -32,6 +33,7 @@ public class HelloApplication extends Application {
     private static final int BUTTOW_HEIGHT=25;
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
    private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont,btnBestAccount;
+   private static Alertt alertt=new Alertt();
 
     @Override
     public void start(Stage stage) {
@@ -46,7 +48,7 @@ public class HelloApplication extends Application {
         stage.setTitle("Meniu Principal");
         createBtnHandlers();
         if(sqlConnection!=null)stage.show();
-        else createErrorAlert();
+        else alertt.createInformationAlert("DB_ERROR");
 
     }
     private void  createButtons() {
@@ -113,14 +115,7 @@ public class HelloApplication extends Application {
 
 
     }
-    private void createErrorAlert(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Eroare conexiune baza de date");
-        alert.setHeaderText("");
-        String message ="Nu s-a putut realiza conexiunea la baza de date";
-        alert.setContentText(message);
-        alert.show();
-    }
+
     }
 
 

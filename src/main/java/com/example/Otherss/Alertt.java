@@ -1,5 +1,7 @@
 package com.example.Otherss;
 
+import javafx.scene.control.Alert;
+
 public class Alertt {
     public Alertt() {
     }
@@ -44,7 +46,16 @@ public class Alertt {
                 message = "No account found!";
                 noAcc.setContentText(message);
                 noAcc.show();
+                break;
+            case "DB_ERROR":
+                javafx.scene.control.Alert dbEmpty = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+                dbEmpty.setTitle("DATABASE ERROR");
+                dbEmpty.setHeaderText("");
+                message = "Couldn't connect to database";
+                dbEmpty.setContentText(message);
+                dbEmpty.show();
+                break;
         }
-    }
+        }
 
 }
