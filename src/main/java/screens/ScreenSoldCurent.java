@@ -16,7 +16,7 @@ public class ScreenSoldCurent extends Screen {
     private static TextArea txtNrCont;
 
     public ScreenSoldCurent(Connection sqlConnection) {
-       this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
 
         createVBox();
         createScene();
@@ -28,7 +28,6 @@ public class ScreenSoldCurent extends Screen {
     }
 
 
-
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("Sold curent");
@@ -37,7 +36,7 @@ public class ScreenSoldCurent extends Screen {
     protected void createControls() {
 
         Label nrCont = new Label("Numar cont");
-        txtNrCont=new TextArea("");
+        txtNrCont = new TextArea("");
         Button btnSold = new Button("Afisare sold");
 
         Label lblCont = new Label("Sold curent: ");
@@ -47,13 +46,13 @@ public class ScreenSoldCurent extends Screen {
         btnSold.setOnMouseClicked(mouseEvent -> {
             try {
                 DatabaseOperations op = new DatabaseOperations(sqlConnection);
-                op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='"+nrCont.getText()+"'", sold, columnLabel);
+                op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='" + nrCont.getText() + "'", sold, columnLabel);
                 //System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        vBox.getChildren().addAll(nrCont,txtNrCont, lblCont, sold, btnSold);
+        vBox.getChildren().addAll(nrCont, txtNrCont, lblCont, sold, btnSold);
     }
 }

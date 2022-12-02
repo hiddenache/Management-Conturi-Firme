@@ -48,7 +48,7 @@ public class ScreenTranzactieNoua extends Screen {
         btnTransfer.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
             op.newTransaction( Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
-            stage.hide();
+            stage.hide();   alertt.createInformationAlert("TRANZACTIE");
         });
 
     }
