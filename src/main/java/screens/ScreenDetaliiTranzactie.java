@@ -4,6 +4,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
+
 public class ScreenDetaliiTranzactie extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 600;
@@ -16,7 +18,8 @@ public class ScreenDetaliiTranzactie extends Screen {
     public Label lblSuma;
     public Label lbldescriere;
 
-    public ScreenDetaliiTranzactie(String title) {
+    public ScreenDetaliiTranzactie(Connection sqlConnection, String title) {
+       this.sqlConnection=sqlConnection;
         createVBox();
         createScene();
         createStage();

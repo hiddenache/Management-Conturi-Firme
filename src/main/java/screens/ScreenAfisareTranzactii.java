@@ -2,6 +2,7 @@ package screens;
 
 import javafx.scene.control.Button;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,8 @@ public class ScreenAfisareTranzactii extends Screen {
     private List<String> listaTranzactii = new ArrayList<>();
 
 
-    public ScreenAfisareTranzactii() {
+    public ScreenAfisareTranzactii(Connection sqlConnection) {
+        this.sqlConnection=sqlConnection;
 
         createVBox();
         createScene();
@@ -43,14 +45,14 @@ public class ScreenAfisareTranzactii extends Screen {
     }
 
     private void createBtnHandlers() {
-        btnTranzactiiTipCont.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactiiTipCont());
+        btnTranzactiiTipCont.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactiiTipCont(sqlConnection));
         btnTranzactiiData.setOnMouseClicked(mouseEvent -> {
-          new ScreenPopUpData();
+          new ScreenPopUpData(sqlConnection);
 
 
         });
         btnTranzactiiNumeCont.setOnMouseClicked(mouseEvent -> {
-            new ScreenPopUpNumeCont();
+            new ScreenPopUpNumeCont(sqlConnection);
         });
 
     }

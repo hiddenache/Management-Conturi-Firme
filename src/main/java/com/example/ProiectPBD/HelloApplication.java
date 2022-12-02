@@ -6,14 +6,18 @@ import database.DatabaseOperations;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import screens.*;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Logger;
+
+import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 //TODO
 /*
   -----------------------
@@ -34,11 +38,13 @@ public class HelloApplication extends Application {
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
    private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont,btnBestAccount;
    private static Alertt alertt=new Alertt();
+   private Connection sqlConnection;
+    private static final Logger LOGGER=Logger.getLogger(HelloApplication.class.getName());
 
     @Override
     public void start(Stage stage) {
 
-        Connection sqlConnection=getConnection().orElse(null);
+        sqlConnection=getConnection().orElse(null);
         root.setAlignment(Pos.TOP_CENTER);
         root.prefHeightProperty().bind(SCENE.heightProperty());
         root.prefWidthProperty().bind(SCENE.widthProperty());
@@ -49,6 +55,7 @@ public class HelloApplication extends Application {
         createBtnHandlers();
         if(sqlConnection!=null)stage.show();
         else alertt.createInformationAlert("DB_ERROR");
+        stage.getScene().getWindow().addEventFilter(WINDOW_CLOSE_REQUEST, this::closeWindowEvent);
 
     }
     private void  createButtons() {
@@ -74,16 +81,16 @@ public class HelloApplication extends Application {
     }
     private List<String> listaTranzactii=new ArrayList<>();
     private void createBtnHandlers() {
-        btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont());
-        btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua());
-        btnStergereCont.setOnMouseClicked(mouseEvent -> new ScreenStergereCont());
-        btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii());
-        btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent());
-        btnCalculareBilant.setOnMouseClicked(mouseEvent -> new ScreenBilant());
+        btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont(sqlConnection));
+        btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua(sqlConnection));
+        btnStergereCont.setOnMouseClicked(mouseEvent -> new ScreenStergereCont(sqlConnection));
+        btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii(sqlConnection));
+        btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent(sqlConnection));
+        btnCalculareBilant.setOnMouseClicked(mouseEvent -> new ScreenBilant(sqlConnection));
         Set transactions = new HashSet();
         btnBestAccount.setOnMouseClicked(mouseEvent -> {
             listaTranzactii.clear();
-            DatabaseOperations op = new DatabaseOperations();
+            DatabaseOperations op = new DatabaseOperations(sqlConnection);
             System.out.println(op.getBestAccount());
 
             for(Object tran : op.getBestAccount()){
@@ -93,7 +100,7 @@ public class HelloApplication extends Application {
             listaTranzactii = transactions.stream().toList();
 
             if(!listaTranzactii.isEmpty()){
-                ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection,listaTranzactii);
             }
             transactions.clear();
         });
@@ -114,6 +121,18 @@ public class HelloApplication extends Application {
         return databaseManager.connect();
 
 
+    }
+    private void closeWindowEvent(WindowEvent event) {
+        try {
+           if(sqlConnection!=null){
+               sqlConnection.close();
+               LOGGER.info("Database has been closed");
+           }
+
+
+        } catch (SQLException e) {
+            LOGGER.severe("An error occured while trying to close the database");
+        }
     }
 
     }

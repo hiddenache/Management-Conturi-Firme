@@ -8,6 +8,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class ScreenListViewConturi extends Screen {
@@ -18,7 +19,8 @@ public class ScreenListViewConturi extends Screen {
 
 
     ObservableList<String> items;
-    public ScreenListViewConturi(List<String> listaTranzactii) {
+    public ScreenListViewConturi(Connection sqlConnection, List<String> listaTranzactii) {
+        this.sqlConnection=sqlConnection;
         this.listaTranzactii=listaTranzactii;
         items=  FXCollections.observableArrayList(listaTranzactii);
         createVBox();

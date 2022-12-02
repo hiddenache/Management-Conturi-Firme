@@ -6,13 +6,15 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.sql.Connection;
+
 
 public class ScreenBilant extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 300;
 
-    public ScreenBilant() {
-
+    public ScreenBilant(Connection sqlConnection) {
+       this.sqlConnection=sqlConnection;
         createVBox();
         createScene();
         createStage();

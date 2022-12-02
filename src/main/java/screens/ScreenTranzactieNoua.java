@@ -5,12 +5,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
+import java.sql.Connection;
+
 public class ScreenTranzactieNoua extends Screen {
     private static final int  STAGE_DEFAULT_WIDTH=600;
     private static final int STAGE_DEFAULT_HEIGHT=600;
 
 
-    public ScreenTranzactieNoua() {
+    public ScreenTranzactieNoua(Connection sqlConnection) {
+       this.sqlConnection=sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -43,8 +46,8 @@ public class ScreenTranzactieNoua extends Screen {
         vBox.getChildren().addAll(lblContDebitor, txtContDebitor,lblContCreditor, txtContCreditor,lblSuma, txtSuma,lblDescriere, txtDescriere, btnTransfer);
 
         btnTransfer.setOnMouseClicked(mouseEvent -> {
-            DatabaseOperations op = new DatabaseOperations();
-            op.newTransaction(sqlConnection, Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+            DatabaseOperations op = new DatabaseOperations(sqlConnection);
+            op.newTransaction( Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
             stage.hide();
         });
 

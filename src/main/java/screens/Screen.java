@@ -17,12 +17,13 @@ public abstract class Screen {
     protected VBox vBox;
     protected Scene scene;
     protected Stage stage;
-    public static Connection sqlConnection ;
+    protected  Connection sqlConnection ;
     protected static Alertt alertt=new Alertt();
 
     public Screen() {
-        sqlConnection = getConnection().orElse(null);
+
     }
+
 
     protected void createScene() {
         scene = new Scene(vBox);
@@ -45,13 +46,7 @@ public abstract class Screen {
 
     protected abstract void createControls();
 
-    private static Optional<Connection> getConnection() {
 
-        DatabaseManager databaseManager = new DatabaseManager();
-        return databaseManager.connect();
-
-
-    }
 }
 
 

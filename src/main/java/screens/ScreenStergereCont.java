@@ -6,11 +6,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
+import java.sql.Connection;
+
 public class ScreenStergereCont extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 200;
 
-    public ScreenStergereCont() {
+    public ScreenStergereCont(Connection sqlConnection) {
+        this.sqlConnection=sqlConnection;
 
         createVBox();
         createScene();
@@ -39,9 +42,9 @@ public class ScreenStergereCont extends Screen {
         vBox.getChildren().addAll(lblCont, txtCont, btnDelete);
 
         btnDelete.setOnMouseClicked(mouseEvent -> {
-            DatabaseOperations op = new DatabaseOperations();
+            DatabaseOperations op = new DatabaseOperations(sqlConnection);
             // sqlConnection= getConnection().orElse(null);
-            if(op.deleteAccount(sqlConnection, txtCont.getText())==1) {
+            if(op.deleteAccount( txtCont.getText())==1) {
                 stage.hide();
                 alertt.createInformationAlert("SUCCES");
             }

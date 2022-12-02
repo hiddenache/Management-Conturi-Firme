@@ -16,18 +16,10 @@ public class DatabaseOperations {
 
     private String result;
 
-    protected static Connection sqlConnection;
+    public Connection sqlConnection;
 
-    public DatabaseOperations() {
-        sqlConnection = getConnection().orElse(null);
-    }
-
-    private static Optional<Connection> getConnection() {
-
-        DatabaseManager databaseManager = new DatabaseManager();
-        return databaseManager.connect();
-
-
+    public DatabaseOperations(Connection sqlConnection) {
+        this.sqlConnection=sqlConnection;
     }
 
     /**
@@ -37,9 +29,9 @@ public class DatabaseOperations {
      * text - textul care trebuie modificat in momentul cand comanda returneaza o informatie
      * columnLabel - coloana din baza de date de care avem nevoie pentru a retrage informatii
      */
-    public String getInfo(Connection dbConnection, String query, Label text, String columnLabel) {
+    public String getInfo( String query, Label text, String columnLabel) {
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 text.setText(resultSet.getString(columnLabel));
@@ -55,11 +47,11 @@ public class DatabaseOperations {
 
 
 
-    public int deleteAccount(Connection dbConnection, String accNum) {
+    public int deleteAccount( String accNum) {
 
         String queryOp = "DELETE from cont WHERE nr_cont='" + accNum + "'";
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
             if (result == 1)
                 return 1;
@@ -71,13 +63,13 @@ public class DatabaseOperations {
     }
 
 
-    public int addAccount(Connection dbConnection, String numeCont, String descriere, String tipCont, float sold_initial) {
+    public int addAccount( String numeCont, String descriere, String tipCont, float sold_initial) {
 
         String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial, sold_curent)" +
                 "VALUES ('" + numeCont + "','" + descriere + "','" + tipCont + "','" + sold_initial + "', '" + sold_initial + "')";
 
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement =sqlConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
             if (result == 1)
                 return 1;
@@ -91,7 +83,7 @@ public class DatabaseOperations {
 
     // debitorul da, creditorul primeste
 
-    public void newTransaction(Connection dbConnection, int cont_creditor, int cont_debitor, Float suma, String descriere) {
+    public void newTransaction( int cont_creditor, int cont_debitor, Float suma, String descriere) {
         java.util.Date javaDate = new java.util.Date();
         java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
 
@@ -100,7 +92,7 @@ public class DatabaseOperations {
 
         boolean error = false;
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
 
             ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
 
@@ -154,12 +146,12 @@ public class DatabaseOperations {
         }
     }
 
-    public Set getTransactions(Connection dbConnection, int nr_cont) {
+    public Set getTransactions( int nr_cont) {
         String query = "SELECT * from tranzactie where cont_debitor='" + nr_cont + "' or cont_creditor='" + nr_cont + "'";
         Set<Transaction> transactions = new HashSet<Transaction>();
 
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
             ResultSet transaction = statement.executeQuery(query);
             while (transaction.next()) {
                 int cont_debitor = transaction.getInt("cont_debitor");
@@ -179,7 +171,7 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public Set getTransactionsFromDateToDate(Connection dbConnection, LocalDate data_inceput, LocalDate data_sfarsit) {
+    public Set getTransactionsFromDateToDate( LocalDate data_inceput, LocalDate data_sfarsit) {
         String query = "SELECT * from tranzactie";
         LocalDate start = data_inceput;
         LocalDate end = data_sfarsit;
@@ -187,7 +179,7 @@ public class DatabaseOperations {
         Set<Transaction> transactions = new HashSet<Transaction>();
 
         try {
-            Statement statement = dbConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
             ResultSet getDatesBetweenStartEnd = statement.executeQuery("SELECT * from tranzactie where data_tranzactie BETWEEN '" + data_inceput + "' and '" + data_sfarsit + "' order by data_tranzactie DESC");
             while (getDatesBetweenStartEnd.next()) {
                 int cont_debitor = getDatesBetweenStartEnd.getInt("cont_debitor");
@@ -206,14 +198,14 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public List getSpecificTypeTransactions(Connection dbConnections, String tip) {
+    public List getSpecificTypeTransactions( String tip) {
         String getAccounts = "SELECT * from cont where tip_cont='" + tip + "'";
 
         List transactions = new ArrayList();
         List<String> accountsTypes = new ArrayList<>();
         List<Integer> accountNumbers = new ArrayList<>();
         try {
-            Statement statement = dbConnections.createStatement();
+            Statement statement = sqlConnection.createStatement();
             ResultSet getAccountsFromDB = statement.executeQuery(getAccounts);
 
             int nr_cont;
@@ -261,6 +253,6 @@ public class DatabaseOperations {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return getTransactions(sqlConnection, cont_debitorMax);
+        return getTransactions(cont_debitorMax);
     }
 }

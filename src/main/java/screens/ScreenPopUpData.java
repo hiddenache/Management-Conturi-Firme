@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,7 +19,8 @@ public class ScreenPopUpData extends Screen{
     DatePicker lastDatePicker=new DatePicker();
     private List<String> listaTranzactii=new ArrayList<>();
     Button btnSearch;
-    public ScreenPopUpData() {
+    public ScreenPopUpData(Connection sqlConnection) {
+        this.sqlConnection=sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -53,14 +55,14 @@ public class ScreenPopUpData extends Screen{
         Set transactions = new HashSet();
         btnSearch.setOnMouseClicked(mouseEvent -> {
             try{
-                DatabaseOperations op = new DatabaseOperations();
+                DatabaseOperations op = new DatabaseOperations(sqlConnection);
                 if(!(firstDatePicker.getValue() == null) || !(lastDatePicker.getValue() == null)){
-                    for(Object tran : op.getTransactionsFromDateToDate(sqlConnection, firstDatePicker.getValue(), lastDatePicker.getValue())){
+                    for(Object tran : op.getTransactionsFromDateToDate( firstDatePicker.getValue(), lastDatePicker.getValue())){
                         transactions.add(tran);
                     }
                     listaTranzactii = transactions.stream().toList();
                     if(!listaTranzactii.isEmpty()){
-                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
+                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection,listaTranzactii);
                     }
                     transactions.clear();
                 }

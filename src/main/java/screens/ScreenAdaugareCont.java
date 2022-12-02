@@ -5,6 +5,7 @@ import database.DatabaseOperations;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 
+import java.sql.Connection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +20,8 @@ public class ScreenAdaugareCont extends Screen {
 
     String[] items = { "ca", "pa", "ac" };
 
-    public ScreenAdaugareCont() {
+    public ScreenAdaugareCont(Connection sqlConnection) {
+      this.sqlConnection=sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -51,7 +53,7 @@ public class ScreenAdaugareCont extends Screen {
 
         Pattern pattern = Pattern.compile("[0-9+]");
         btnAdaugare.setOnMouseClicked(mouseEvent -> {
-            DatabaseOperations op = new DatabaseOperations();
+            DatabaseOperations op = new DatabaseOperations(sqlConnection);
             //   sqlConnection=getConnection().orElse(null);
             Matcher matcher = pattern.matcher(txtSoldInitial.getText()); // doar cifre
             if(txtNumarCont.getText().isEmpty()
@@ -62,7 +64,7 @@ public class ScreenAdaugareCont extends Screen {
                     ||Float.parseFloat(txtSoldInitial.getText()) < 0)
                 alertt.createInformationAlert("ERROR");
              else{
-                    if(op.addAccount(sqlConnection, txtNumarCont.getText(), txtDescriere.getText(),
+                    if(op.addAccount(txtNumarCont.getText(), txtDescriere.getText(),
                             choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1) {
                        alertt.createInformationAlert("SUCCES");
                         stage.hide();
