@@ -2,13 +2,11 @@ package database;
 
 import Storage.Transaction;
 import com.example.Otherss.Alertt;
-import javafx.scene.control.Alert;
+import com.example.Otherss.Suma;
 import javafx.scene.control.Label;
 
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -19,7 +17,7 @@ public class DatabaseOperations {
     public Connection sqlConnection;
 
     public DatabaseOperations(Connection sqlConnection) {
-        this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
     }
 
     /**
@@ -29,12 +27,13 @@ public class DatabaseOperations {
      * text - textul care trebuie modificat in momentul cand comanda returneaza o informatie
      * columnLabel - coloana din baza de date de care avem nevoie pentru a retrage informatii
      */
-    public String getInfo( String query, Label text, String columnLabel) {
+    public String getSoldCurent(String query, Label text, String columnLabel) {
         try {
             Statement statement = sqlConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 text.setText(resultSet.getString(columnLabel));
+                System.out.println(text);
             }
             resultSet.close();
             statement.close();
@@ -46,8 +45,7 @@ public class DatabaseOperations {
     }
 
 
-
-    public int deleteAccount( String accNum) {
+    public int deleteAccount(String accNum) {
 
         String queryOp = "DELETE from cont WHERE nr_cont='" + accNum + "'";
         try {
@@ -63,13 +61,13 @@ public class DatabaseOperations {
     }
 
 
-    public int addAccount( String numeCont, String descriere, String tipCont, float sold_initial) {
+    public int addAccount(String numeCont, String descriere, String tipCont, float sold_initial) {
 
         String queryOp = "INSERT into cont (nume_cont, descriere, tip_cont, sold_initial, sold_curent)" +
                 "VALUES ('" + numeCont + "','" + descriere + "','" + tipCont + "','" + sold_initial + "', '" + sold_initial + "')";
 
         try {
-            Statement statement =sqlConnection.createStatement();
+            Statement statement = sqlConnection.createStatement();
             int result = statement.executeUpdate(queryOp);
             if (result == 1)
                 return 1;
@@ -83,7 +81,7 @@ public class DatabaseOperations {
 
     // debitorul da, creditorul primeste
 
-    public void newTransaction( int cont_creditor, int cont_debitor, Float suma, String descriere) {
+    public void newTransaction(int cont_creditor, int cont_debitor, Float suma, String descriere) {
         java.util.Date javaDate = new java.util.Date();
         java.sql.Date mySQLDate = new java.sql.Date(javaDate.getTime());
 
@@ -137,7 +135,7 @@ public class DatabaseOperations {
             }
 
             if (error) {
-                Alertt alertt=new Alertt();
+                Alertt alertt = new Alertt();
                 alertt.createInformationAlert("ERROR");
             }
 
@@ -146,7 +144,7 @@ public class DatabaseOperations {
         }
     }
 
-    public Set getTransactions( int nr_cont) {
+    public Set getTransactions(int nr_cont) {
         String query = "SELECT * from tranzactie where cont_debitor='" + nr_cont + "' or cont_creditor='" + nr_cont + "'";
         Set<Transaction> transactions = new HashSet<Transaction>();
 
@@ -171,7 +169,7 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public Set getTransactionsFromDateToDate( LocalDate data_inceput, LocalDate data_sfarsit) {
+    public Set getTransactionsFromDateToDate(LocalDate data_inceput, LocalDate data_sfarsit) {
         String query = "SELECT * from tranzactie";
         LocalDate start = data_inceput;
         LocalDate end = data_sfarsit;
@@ -198,7 +196,7 @@ public class DatabaseOperations {
         return transactions;
     }
 
-    public List getSpecificTypeTransactions( String tip) {
+    public List getSpecificTypeTransactions(String tip) {
         String getAccounts = "SELECT * from cont where tip_cont='" + tip + "'";
 
         List transactions = new ArrayList();
@@ -230,7 +228,8 @@ public class DatabaseOperations {
         }
         return accountNumbers;
     }
-    public Set getBestAccount(){
+
+    public Set getBestAccount() {
         //SELECT COUNT(`cont_debitor`) FROM `tranzactie` GROUP BY `cont_debitor`;
         String query = "SELECT *, COUNT(*) from tranzactie group by cont_debitor";
         int cont_debitorMax = -1;
@@ -244,7 +243,7 @@ public class DatabaseOperations {
                 cont_debitor = transaction.getInt("cont_debitor");
                 count = transaction.getInt("COUNT(*)");
 
-                if(count > countMax){
+                if (count > countMax) {
                     countMax = count;
                     cont_debitorMax = cont_debitor;
                 }
@@ -255,4 +254,44 @@ public class DatabaseOperations {
         }
         return getTransactions(cont_debitorMax);
     }
+
+    public ArrayList<Suma> getBilant() {
+        ArrayList<Suma> listSuma = new ArrayList<>();
+        int nr_cont;
+        float sold_initial;
+        float suma_creditoare;
+        float suma_debitoare;
+        ResultSet rsContC, rsContD;
+        String query = "SELECT nr_cont, sold_initial FROM cont ";
+        try {
+            Statement statement = sqlConnection.createStatement();
+            Statement statementC = sqlConnection.createStatement();
+            Statement statementD = sqlConnection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                suma_creditoare = 0;
+                suma_debitoare = 0;
+                nr_cont = resultSet.getInt("nr_cont");
+                sold_initial = resultSet.getFloat("sold_initial");
+
+                rsContC = statementC.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_creditor = " + nr_cont);
+                while (rsContC.next()) suma_creditoare += rsContC.getFloat("suma_tranzactie");
+                rsContC.close();
+
+                rsContD = statementD.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_debitor = " + nr_cont);
+                while (rsContD.next()) suma_debitoare += rsContD.getFloat("suma_tranzactie");
+                rsContD.close();
+
+                listSuma.add(new Suma(nr_cont, sold_initial, suma_creditoare, suma_debitoare));
+            }
+
+            resultSet.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return listSuma;
+
+    }
+
 }

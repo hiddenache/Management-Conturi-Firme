@@ -21,6 +21,8 @@ import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 //TODO
 /*
   -----------------------
+  sold curent nu merge
+  functia de stergere nu sterge ce ne spune cerinta
   verificari screen sold curent
   verificari screen tranzactie noua
   verificari screenuri afisare tranzactii

@@ -1,7 +1,7 @@
 package com.example.Otherss;
 
 public  class Suma {
-    private  String numarCont;
+    private  int numarCont;
     private float bilantInitial;
     private  float sumaCreditoare;
     private  float  sumaDebitoare;
@@ -9,18 +9,18 @@ public  class Suma {
     public Suma() {
     }
 
-    public Suma(String numarCont, float bilantInitial, float sumaCreditoare, float sumaDebitoare) {
+    public Suma(int numarCont, float bilantInitial, float sumaCreditoare, float sumaDebitoare) {
         this.numarCont = numarCont;
         this.bilantInitial = bilantInitial;
         this.sumaCreditoare = sumaCreditoare;
         this.sumaDebitoare = sumaDebitoare;
     }
 
-    public String getNumarCont() {
+    public int getNumarCont() {
         return numarCont;
     }
 
-    public void setNumarCont(String numarCont) {
+    public void setNumarCont(int numarCont) {
         this.numarCont = numarCont;
     }
 

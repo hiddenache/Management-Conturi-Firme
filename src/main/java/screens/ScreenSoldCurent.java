@@ -46,7 +46,7 @@ public class ScreenSoldCurent extends Screen {
         btnSold.setOnMouseClicked(mouseEvent -> {
             try {
                 DatabaseOperations op = new DatabaseOperations(sqlConnection);
-                op.getInfo("SELECT " + columnLabel + " from cont where nr_cont='" + nrCont.getText() + "'", sold, columnLabel);
+                op.getSoldCurent("SELECT " + columnLabel + " from cont where nr_cont='" + nrCont.getText() + "'", sold, columnLabel);
                 //System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
             } catch (Exception e) {
                 e.printStackTrace();

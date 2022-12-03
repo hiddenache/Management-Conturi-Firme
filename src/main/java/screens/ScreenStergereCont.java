@@ -13,7 +13,7 @@ public class ScreenStergereCont extends Screen {
     private static final int STAGE_DEFAULT_HEIGHT = 200;
 
     public ScreenStergereCont(Connection sqlConnection) {
-        this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
 
         createVBox();
         createScene();
@@ -44,11 +44,10 @@ public class ScreenStergereCont extends Screen {
         btnDelete.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
             // sqlConnection= getConnection().orElse(null);
-            if(op.deleteAccount( txtCont.getText())==1) {
+            if (op.deleteAccount(txtCont.getText()) == 1) {
                 stage.hide();
                 alertt.createInformationAlert("SUCCES");
-            }
-            else  alertt.createInformationAlert("ERROR");
+            } else alertt.createInformationAlert("ERROR");
         });
     }
 }
