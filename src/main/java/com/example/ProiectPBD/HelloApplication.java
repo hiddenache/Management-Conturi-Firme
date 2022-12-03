@@ -21,12 +21,11 @@ import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 //TODO
 /*
   -----------------------
-  sold curent nu merge
-  functia de stergere nu sterge ce ne spune cerinta
+  la butonul de afisare tranzactii nu m-am uitat ce merge si ce nu
   verificari screen sold curent
   verificari screen tranzactie noua
   verificari screenuri afisare tranzactii
-  verificari conturi cu cele mai multe tranzactii (afisare mesaj daca nu exista niciun cont | mai multe conturi au acelasi nr de tranzactii);
+  verificari conturi cu cele mai multe tranzactii (afisare mesaj daca nu exista niciun cont | ar trebui sa afiseze toate conturile daca sunt mai multe cu acelasi nr de tranzactii);
 
   -----------------------
 */
@@ -85,7 +84,11 @@ public class HelloApplication extends Application {
     private void createBtnHandlers() {
         btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont(sqlConnection));
         btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua(sqlConnection));
-        btnStergereCont.setOnMouseClicked(mouseEvent -> new ScreenStergereCont(sqlConnection));
+        btnStergereCont.setOnMouseClicked(mouseEvent -> {
+            DatabaseOperations databaseOperations=new DatabaseOperations(sqlConnection);
+            databaseOperations.delete();
+                });
+
         btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii(sqlConnection));
         btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent(sqlConnection));
         btnCalculareBilant.setOnMouseClicked(mouseEvent -> new ScreenBilant(sqlConnection));

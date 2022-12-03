@@ -55,6 +55,20 @@ public class Alertt {
                 dbEmpty.setContentText(message);
                 dbEmpty.show();
                 break;
+            case "DELETE_OK":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "All inactive accounts have been deleted ";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "DELETE_INFO":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "There are no inactive accounts to delete";
+                alert.setContentText(message);
+                alert.show();
+                break;
         }
         }
 

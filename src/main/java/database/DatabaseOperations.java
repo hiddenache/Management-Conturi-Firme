@@ -15,10 +15,12 @@ public class DatabaseOperations {
     private String result;
 
     public Connection sqlConnection;
+    private Alertt alertt=new Alertt();
 
     public DatabaseOperations(Connection sqlConnection) {
         this.sqlConnection = sqlConnection;
     }
+
 
     /**
      * Functie pentru preluarea de informatii dintr-un anumit tabel
@@ -291,6 +293,33 @@ public class DatabaseOperations {
             throw new RuntimeException(e);
         }
         return listSuma;
+
+    }
+    public void delete()
+    {
+        ArrayList<Suma> listSuma = getBilant();
+        String query;
+        int ok=0;
+
+        try {
+            Statement statement=sqlConnection.createStatement();
+            for(Suma suma : listSuma)
+            {
+                if(suma.getSumaCreditoare()==0&&suma.getSumaDebitoare()==0)
+                {
+                    ok=1;
+                   query="DELETE from cont WHERE nr_cont = "+ suma.getNumarCont();
+                   statement.executeUpdate(query);
+                }
+            }
+            if(ok==1) alertt.createInformationAlert("DELETE_OK");
+            else alertt.createInformationAlert("DELETE_INFO");
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 
