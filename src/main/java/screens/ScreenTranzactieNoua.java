@@ -57,7 +57,11 @@ public class ScreenTranzactieNoua extends Screen {
                     txtSuma.getText().isBlank()) {
                 alert.createInformationAlert("EMPTY");
             } else if (op.checkIfAccExists(txtContCreditor.getText()) && op.checkIfAccExists(txtContDebitor.getText())) {
-                op.newTransaction(Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+                if(txtDescriere.getText().length() < 11){
+                    op.newTransaction(Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+                } else {
+                    alert.createInformationAlert("TOOMANY");
+                }
             } else {
                 alert.createInformationAlert("NOACC");
             }

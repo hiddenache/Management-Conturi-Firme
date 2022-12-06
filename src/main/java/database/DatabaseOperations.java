@@ -3,6 +3,7 @@ package database;
 import Storage.Transaction;
 import com.example.Otherss.Alertt;
 import com.example.Otherss.Suma;
+import javafx.css.Size;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -104,42 +105,53 @@ public class DatabaseOperations {
         float soldFinalCreditor; // cel care primeste
         float soldFinalDebitor; // cel care trimite
 
-        try {
-            Statement statement = sqlConnection.createStatement();
+        Alertt alert = new Alertt();
 
-            ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
+        if (cont_creditor != cont_debitor) { // contul care trimite nu trebuie sa fie la fel cu cel care primeste
+            try {
+                Statement statement = sqlConnection.createStatement();
 
-            ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
-            soldContCreditor.next();
-            soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
+                ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
 
-            ResultSet soldContDebitor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
-            soldContDebitor.next();
+                ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
+                soldContCreditor.next();
+                soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
 
-            soldFinalDebitor = soldContDebitor.getFloat("sold_curent") - suma;
+                ResultSet soldContDebitor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
+                soldContDebitor.next();
 
-            Alertt alert = new Alertt();
+                soldFinalDebitor = soldContDebitor.getFloat("sold_curent") - suma;
 
-            if (soldFinalDebitor < 0 || suma > soldFinalCreditor - suma) {
-                // soldFinalCreditor = sold curent + suma de tranzactionare
-                // verificam daca suma de tranzactionare este mai mare decat soldul curent
-                alert.createInformationAlert("NEGATIVE");
-            } else {
-                String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='" + soldFinalCreditor + "' where nr_cont='" + cont_creditor + "'";
-                String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='" + soldFinalDebitor + "' where nr_cont='" + cont_debitor + "'";
+                if (soldFinalDebitor < 0 || suma > soldFinalDebitor - suma) {
+                    // soldFinalCreditor = sold curent + suma de tranzactionare
+                    // verificam daca suma de tranzactionare este mai mare decat soldul curent
+                    alert.createInformationAlert("NEGATIVE");
+                } else {
+                    if (suma < 10000 && suma > 0) {
+                        String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='" + soldFinalCreditor + "' where nr_cont='" + cont_creditor + "'";
+                        String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='" + soldFinalDebitor + "' where nr_cont='" + cont_debitor + "'";
 
-                statement.executeUpdate(insertSoldFinalCreditor);
-                statement.executeUpdate(insertSoldFinalDebitor);
+                        statement.executeUpdate(insertSoldFinalCreditor);
+                        statement.executeUpdate(insertSoldFinalDebitor);
 
-                String newTransactionInfo = "INSERT into tranzactie (cont_debitor, cont_creditor, data_tranzactie, suma_tranzactie, descriere_tranzactie)" +
-                        "VALUES ('" + cont_debitor + "','" + cont_creditor + "','" + mySQLDate + "','" + suma + "','" + descriere + "')";
 
-                statement.executeUpdate(newTransactionInfo);
-                alertt.createInformationAlert("TRANZACTIE");
+                        String newTransactionInfo = "INSERT into tranzactie (cont_debitor, cont_creditor, data_tranzactie, suma_tranzactie, descriere_tranzactie)" +
+                                "VALUES ('" + cont_debitor + "','" + cont_creditor + "','" + mySQLDate + "','" + suma + "','" + descriere + "')";
+
+                        statement.executeUpdate(newTransactionInfo);
+                        alertt.createInformationAlert("TRANZACTIE");
+
+                    } else {
+                        alertt.createInformationAlert("NEGATIVE-TRANSACTION");
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }else{
+            alert.createInformationAlert("SAMEACC");
         }
+
     }
 
     public Set getTransactions(int nr_cont) {

@@ -89,6 +89,27 @@ public class Alertt {
                 alert.setContentText(message);
                 alert.show();
                 break;
+            case "NEGATIVE-TRANSACTION":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "You cannot make negative or higher than 10000 $ transaction!";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "TOOMANY":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "Too many words for transaction description!";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "SAMEACC":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "The account who send cannot be the same as the one who receives!";
+                alert.setContentText(message);
+                alert.show();
+                break;
         }
     }
 
