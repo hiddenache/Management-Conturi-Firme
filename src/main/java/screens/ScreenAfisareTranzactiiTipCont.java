@@ -1,5 +1,7 @@
 package screens;
 
+import Storage.Transaction;
+import com.example.Otherss.Alertt;
 import database.DatabaseOperations;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Button;
@@ -8,16 +10,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ScreenAfisareTranzactiiTipCont extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 300;
     private static final int STAGE_DEFAULT_HEIGHT = 200;
     private static Button btnAfisare;
-    String[] items = { "ca", "pa", "ac" };
-    List<String> listaTranzactii = new ArrayList<>();
+    String[] items = {"ca", "pa", "ac"};
+    Set listaTranzactii = new HashSet();
 
 
     public ScreenAfisareTranzactiiTipCont(Connection sqlConnection) {
@@ -31,7 +37,6 @@ public class ScreenAfisareTranzactiiTipCont extends Screen {
         vBox.setSpacing(40);
         stage.show();
     }
-
 
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
@@ -47,54 +52,50 @@ public class ScreenAfisareTranzactiiTipCont extends Screen {
         ChoiceBox choiceBox = new ChoiceBox(FXCollections.observableArrayList(items));
         vBox.getChildren().addAll(lblCont, choiceBox, btnAfisare);
 
+        Alertt alert = new Alertt();
+
         btnAfisare.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
-            Set transactions = new HashSet();
-            Set finalTransactions = new HashSet();
-            String choice = choiceBox.getSelectionModel().getSelectedItem().toString();
-            listaTranzactii.clear();
-            List<String> transactionsIDs = op.getSpecificTypeTransactions(choice);
-            try {
-                Statement statement = sqlConnection.createStatement();
-                //String list = op.getSpecificTypeTransactions(sqlConnection, choice).stream().toList().toString().replace("[", "").replace("]", "");
+            Object choiceItem = choiceBox.getSelectionModel().getSelectedItem();
+            String choice;
+            if (choiceItem == null) {
+                alert.createInformationAlert("EMPTY");
+            } else {
+                choice = choiceItem.toString();
+                try {
+                    Statement statement = sqlConnection.createStatement();
+                    List<Integer> myList = new ArrayList<Integer>(op.getSpecificTypeTransactions(choice));
+                    // length of the list
+                    int listSize = myList.size();
+                    int i;
 
-                List<Integer> myList = new ArrayList<Integer>(op.getSpecificTypeTransactions(choice).stream().toList());
-                StringBuilder builder = new StringBuilder();
-                // length of the list
-                int locSize = myList.size();
+                    for (i = 0; i < listSize; i++) {
+                        ResultSet getTransactions = statement.executeQuery("SELECT * from tranzactie where cont_debitor='" + myList.get(i) + "' or cont_creditor='" + myList.get(i) + "'");
+                        while (getTransactions.next()) {
+                            int cont_debitor = getTransactions.getInt("cont_debitor");
+                            int cont_creditor = getTransactions.getInt("cont_creditor");
+                            Date date = getTransactions.getDate("data_tranzactie");
+                            float suma = getTransactions.getFloat("suma_tranzactie");
+                            String descriere = getTransactions.getString("descriere_tranzactie");
 
-                Object[] args = new Object[locSize];
-                for (int i = 0; i < locSize; i++) {
-                    builder.append(" " + myList.get(i) + ", ");
-                    args[i] = myList.get(i);
+                            Transaction tran = new Transaction(cont_debitor, cont_creditor, date, suma, descriere);
+                            listaTranzactii.add(tran);
+                        }
+                    }
+
+                    if (!listaTranzactii.isEmpty()) {
+                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection, listaTranzactii.stream().toList());
+                        viewConturi.setTitle("Tranzactii cont de tip " + choice);
+                    } else {
+                        alert.createInformationAlert("NOTRANSACTIONS");
+                    }
+                    listaTranzactii.clear();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                System.out.println(myList);
-                System.out.println(builder.toString().trim());
-
-
-                ResultSet test = statement.executeQuery("SELECT * from tranzactie where cont_debitor in ('" + builder.toString().trim() + "') or cont_creditor in ('" + builder.toString().trim() + "')");
-                while (test.next()) {
-                    listaTranzactii.add(test.getObject(1).toString());
-                    System.out.println(test);
-                }
-
-                System.out.println(op.getSpecificTypeTransactions(choice));
-                System.out.println(listaTranzactii);
-                listaTranzactii.clear();
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
-
-            //ystem.out.println(op.getTransactions(sqlConnection, 5));
-
-            /*listaTranzactii = finalTransactions.stream().toList();
-            if(!listaTranzactii.isEmpty()){
-                ScreenListViewConturi viewConturi = new ScreenListViewConturi(listaTranzactii);
-            }
-            finalTransactions.clear();*/
 
         });
     }

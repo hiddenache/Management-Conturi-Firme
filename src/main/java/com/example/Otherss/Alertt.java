@@ -1,10 +1,9 @@
 package com.example.Otherss;
 
-import javafx.scene.control.Alert;
-
 public class Alertt {
     public Alertt() {
     }
+
     public void createInformationAlert(String tip_alerta) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
         String message;
@@ -69,7 +68,28 @@ public class Alertt {
                 alert.setContentText(message);
                 alert.show();
                 break;
+            case "NEGATIVE":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "You cannot make a transaction the account has not enough money!";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "NOTRANSACTIONS":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "No transactions found!";
+                alert.setContentText(message);
+                alert.show();
+                break;
+            case "EXISTING":
+                alert.setTitle("");
+                alert.setHeaderText("");
+                message = "An account with this name already exists! Try another name!";
+                alert.setContentText(message);
+                alert.show();
+                break;
         }
-        }
+    }
 
 }

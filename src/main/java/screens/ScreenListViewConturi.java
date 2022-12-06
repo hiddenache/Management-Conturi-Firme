@@ -1,12 +1,10 @@
 package screens;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 
 import java.sql.Connection;
 import java.util.List;
@@ -19,10 +17,11 @@ public class ScreenListViewConturi extends Screen {
 
 
     ObservableList<String> items;
+
     public ScreenListViewConturi(Connection sqlConnection, List<String> listaTranzactii) {
-        this.sqlConnection=sqlConnection;
-        this.listaTranzactii=listaTranzactii;
-        items=  FXCollections.observableArrayList(listaTranzactii);
+        this.sqlConnection = sqlConnection;
+        this.listaTranzactii = listaTranzactii;
+        items = FXCollections.observableArrayList(listaTranzactii);
         createVBox();
         createScene();
         createStage();
@@ -33,9 +32,15 @@ public class ScreenListViewConturi extends Screen {
         stage.show();
     }
 
+    private String title = "Lista tranzactii";
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
-        this.stage.setTitle("Lista tranzactii");
+        this.stage.setTitle(title);
     }
 
     protected void createVBox() {

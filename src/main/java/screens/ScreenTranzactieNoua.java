@@ -1,5 +1,6 @@
 package screens;
 
+import com.example.Otherss.Alertt;
 import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,12 +9,12 @@ import javafx.scene.control.TextArea;
 import java.sql.Connection;
 
 public class ScreenTranzactieNoua extends Screen {
-    private static final int  STAGE_DEFAULT_WIDTH=600;
-    private static final int STAGE_DEFAULT_HEIGHT=600;
+    private static final int STAGE_DEFAULT_WIDTH = 600;
+    private static final int STAGE_DEFAULT_HEIGHT = 600;
 
 
     public ScreenTranzactieNoua(Connection sqlConnection) {
-       this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -24,31 +25,43 @@ public class ScreenTranzactieNoua extends Screen {
     }
 
 
-
-    protected void createStage(){
-        super.createStage(STAGE_DEFAULT_WIDTH,STAGE_DEFAULT_HEIGHT);
+    protected void createStage() {
+        super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("Tranzactie Noua");
     }
 
-    protected void createControls(){
+    protected void createControls() {
         TextArea txtContDebitor = new TextArea("");
-        txtContDebitor.setPrefSize(scene.getWidth(),100);
+        txtContDebitor.setPrefSize(scene.getWidth(), 100);
         TextArea txtContCreditor = new TextArea("");
-        txtContCreditor.setPrefSize(scene.getWidth(),100);
+        txtContCreditor.setPrefSize(scene.getWidth(), 100);
         TextArea txtSuma = new TextArea("");
         TextArea txtDescriere = new TextArea("");
         Button btnTransfer = new Button("Transfer");
-        Label lblContCreditor=new Label("Cont creditor");
-        Label lblContDebitor=new Label("Cont debitor");
-        Label lblSuma=new Label("Suma de transferat");
-        Label lblDescriere=new Label("Descriere tranzactie");
+        Label lblContCreditor = new Label("Cont creditor");
+        Label lblContDebitor = new Label("Cont debitor");
+        Label lblSuma = new Label("Suma de transferat");
+        Label lblDescriere = new Label("Descriere tranzactie");
 
-        vBox.getChildren().addAll(lblContDebitor, txtContDebitor,lblContCreditor, txtContCreditor,lblSuma, txtSuma,lblDescriere, txtDescriere, btnTransfer);
-
+        vBox.getChildren().addAll(lblContDebitor, txtContDebitor, lblContCreditor, txtContCreditor, lblSuma, txtSuma, lblDescriere, txtDescriere, btnTransfer);
+        Alertt alert = new Alertt();
         btnTransfer.setOnMouseClicked(mouseEvent -> {
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
-            op.newTransaction( Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
-            stage.hide();   alertt.createInformationAlert("TRANZACTIE");
+            if (txtContCreditor.getText().isBlank() ||
+                    txtContCreditor.getText().isEmpty() ||
+                    txtContDebitor.getText().isBlank() ||
+                    txtContDebitor.getText().isEmpty() ||
+                    txtDescriere.getText().isBlank() ||
+                    txtDescriere.getText().isEmpty() ||
+                    txtSuma.getText().isEmpty() ||
+                    txtSuma.getText().isBlank()) {
+                alert.createInformationAlert("EMPTY");
+            } else if (op.checkIfAccExists(txtContCreditor.getText()) && op.checkIfAccExists(txtContDebitor.getText())) {
+                op.newTransaction(Integer.parseInt(txtContCreditor.getText().trim()), Integer.parseInt(txtContDebitor.getText().trim()), Float.valueOf(txtSuma.getText().trim()), txtDescriere.getText().trim());
+            } else {
+                alert.createInformationAlert("NOACC");
+            }
+            stage.hide();
         });
 
     }

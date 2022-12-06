@@ -1,10 +1,10 @@
 package com.example.Otherss;
 
-public  class Suma {
-    private  int numarCont;
+public class Suma {
+    private int numarCont;
     private float bilantInitial;
-    private  float sumaCreditoare;
-    private  float  sumaDebitoare;
+    private float sumaCreditoare;
+    private float sumaDebitoare;
 
     public Suma() {
     }

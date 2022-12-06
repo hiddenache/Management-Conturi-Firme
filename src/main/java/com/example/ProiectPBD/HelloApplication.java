@@ -19,54 +19,49 @@ import java.util.logging.Logger;
 
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 //TODO
-/*
-  -----------------------
-  la butonul de afisare tranzactii nu m-am uitat ce merge si ce nu
-  verificari screen sold curent
-  verificari screen tranzactie noua
-  verificari screenuri afisare tranzactii
-  verificari conturi cu cele mai multe tranzactii (afisare mesaj daca nu exista niciun cont | ar trebui sa afiseze toate conturile daca sunt mai multe cu acelasi nr de tranzactii);
 
-  -----------------------
-*/
+/**
+ * test, check, modify, styling.
+ */
 
 public class HelloApplication extends Application {
     private final VBox root = new VBox(10);
     private static final int SCENE_DEFAULT_WIDTH = 350;
     private static final int SCENE_DEFAULT_HEIGHT = 250;
-    private static final int BUTTON_WIDTH=250;
-    private static final int BUTTOW_HEIGHT=25;
+    private static final int BUTTON_WIDTH = 250;
+    private static final int BUTTOW_HEIGHT = 25;
     private final Scene SCENE = new Scene(root, SCENE_DEFAULT_WIDTH, SCENE_DEFAULT_HEIGHT);
-   private static  Button btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont,btnBestAccount;
-   private static Alertt alertt=new Alertt();
-   private Connection sqlConnection;
-    private static final Logger LOGGER=Logger.getLogger(HelloApplication.class.getName());
+    private static Button btnAdaugareCont, btnTranzactieNoua, btnSoldCurent, btnAfisareTranzactii, btnCalculareBilant, btnStergereCont, btnBestAccount;
+    private static final Alertt alertt = new Alertt();
+    private Connection sqlConnection;
+    private static final Logger LOGGER = Logger.getLogger(HelloApplication.class.getName());
 
     @Override
     public void start(Stage stage) {
 
-        sqlConnection=getConnection().orElse(null);
+        sqlConnection = getConnection().orElse(null);
         root.setAlignment(Pos.TOP_CENTER);
         root.prefHeightProperty().bind(SCENE.heightProperty());
         root.prefWidthProperty().bind(SCENE.widthProperty());
         createButtons();
-        root.getChildren().addAll(btnAdaugareCont,btnTranzactieNoua,btnSoldCurent,btnAfisareTranzactii,btnCalculareBilant,btnStergereCont,btnBestAccount);
+        root.getChildren().addAll(btnAdaugareCont, btnTranzactieNoua, btnSoldCurent, btnAfisareTranzactii, btnCalculareBilant, btnStergereCont, btnBestAccount);
         stage.setScene(SCENE);
         stage.setTitle("Meniu Principal");
         createBtnHandlers();
-        if(sqlConnection!=null)stage.show();
+        if (sqlConnection != null) stage.show();
         else alertt.createInformationAlert("DB_ERROR");
         stage.getScene().getWindow().addEventFilter(WINDOW_CLOSE_REQUEST, this::closeWindowEvent);
 
     }
-    private void  createButtons() {
+
+    private void createButtons() {
         btnAdaugareCont = new Button("Adaugare cont");
         btnTranzactieNoua = new Button("Tranzactie noua");
         btnSoldCurent = new Button("Sold curent");
         btnAfisareTranzactii = new Button("Afisare tranzactii");
         btnCalculareBilant = new Button("Bilant initial, suma creditoare/debitoare");
         btnStergereCont = new Button("Stergere cont");
-        btnBestAccount=new Button("Contul cu cele mai multe tranzactii");
+        btnBestAccount = new Button("Contul cu cele mai multe tranzactii");
 
         /* ------------------------------------------------------ Preferred size ----------------------------------------------------- */
         btnAdaugareCont.setPrefSize(BUTTON_WIDTH, BUTTOW_HEIGHT);
@@ -80,14 +75,16 @@ public class HelloApplication extends Application {
         /* ------------------------------------------------------ Handlers ----------------------------------------------------- */
 
     }
-    private List<String> listaTranzactii=new ArrayList<>();
+
+    private List<String> listaTranzactii = new ArrayList<>();
+
     private void createBtnHandlers() {
         btnAdaugareCont.setOnMouseClicked(mouseEvent -> new ScreenAdaugareCont(sqlConnection));
         btnTranzactieNoua.setOnMouseClicked(mouseEvent -> new ScreenTranzactieNoua(sqlConnection));
         btnStergereCont.setOnMouseClicked(mouseEvent -> {
-            DatabaseOperations databaseOperations=new DatabaseOperations(sqlConnection);
+            DatabaseOperations databaseOperations = new DatabaseOperations(sqlConnection);
             databaseOperations.delete();
-                });
+        });
 
         btnAfisareTranzactii.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactii(sqlConnection));
         btnSoldCurent.setOnMouseClicked(mouseEvent -> new ScreenSoldCurent(sqlConnection));
@@ -96,30 +93,24 @@ public class HelloApplication extends Application {
         btnBestAccount.setOnMouseClicked(mouseEvent -> {
             listaTranzactii.clear();
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
-            System.out.println(op.getBestAccount());
-
-            for(Object tran : op.getBestAccount()){
-                transactions.add(tran);
-            }
-
-            listaTranzactii = transactions.stream().toList();
-
-            if(!listaTranzactii.isEmpty()){
-                ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection,listaTranzactii);
+            if (op.getBestAccount().isEmpty() || op.getBestAccount() == null) {
+                alertt.createInformationAlert("NOTRANSACTIONS");
+            } else {
+                for (Object tran : op.getBestAccount()) {
+                    transactions.add(tran);
+                }
+                listaTranzactii = transactions.stream().toList();
+                ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection, listaTranzactii);
             }
             transactions.clear();
         });
     }
 
-
-
-
-
-
-        public static void main (String[]args){
+    public static void main(String[] args) {
 
         launch();
-        }
+    }
+
     private static Optional<Connection> getConnection() {
 
         DatabaseManager databaseManager = new DatabaseManager();
@@ -127,12 +118,13 @@ public class HelloApplication extends Application {
 
 
     }
+
     private void closeWindowEvent(WindowEvent event) {
         try {
-           if(sqlConnection!=null){
-               sqlConnection.close();
-               LOGGER.info("Database has been closed");
-           }
+            if (sqlConnection != null) {
+                sqlConnection.close();
+                LOGGER.info("Database has been closed");
+            }
 
 
         } catch (SQLException e) {
@@ -140,7 +132,7 @@ public class HelloApplication extends Application {
         }
     }
 
-    }
+}
 
 
 

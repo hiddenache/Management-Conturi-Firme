@@ -3,19 +3,20 @@ package database;
 import Storage.Transaction;
 import com.example.Otherss.Alertt;
 import com.example.Otherss.Suma;
-import javafx.scene.control.Label;
 
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class DatabaseOperations {
 
     private String result;
 
     public Connection sqlConnection;
-    private Alertt alertt=new Alertt();
+    private final Alertt alertt = new Alertt();
 
     public DatabaseOperations(Connection sqlConnection) {
         this.sqlConnection = sqlConnection;
@@ -29,23 +30,23 @@ public class DatabaseOperations {
      * text - textul care trebuie modificat in momentul cand comanda returneaza o informatie
      * columnLabel - coloana din baza de date de care avem nevoie pentru a retrage informatii
      */
-    public String getSoldCurent(String query, Label text, String columnLabel) {
+    public String getSoldCurent(String query, String columnLabel) {
+        String result = "";
         try {
             Statement statement = sqlConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
-            while (resultSet.next()) {
-                text.setText(resultSet.getString(columnLabel));
-                System.out.println(text);
-            }
+
+            resultSet.next();
+            result = resultSet.getString(columnLabel);
             resultSet.close();
             statement.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        System.out.println(result);
         return result;
     }
-
 
     public int deleteAccount(String accNum) {
 
@@ -62,6 +63,19 @@ public class DatabaseOperations {
         return 0;
     }
 
+    public boolean checkIfAccExists(String accNum) {
+        String queryOp = "SELECT * from cont WHERE nr_cont='" + accNum + "'";
+        try {
+            Statement statement = sqlConnection.createStatement();
+            ResultSet result = statement.executeQuery(queryOp);
+            if (result.next()) {
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public int addAccount(String numeCont, String descriere, String tipCont, float sold_initial) {
 
@@ -90,39 +104,27 @@ public class DatabaseOperations {
         float soldFinalCreditor; // cel care primeste
         float soldFinalDebitor; // cel care trimite
 
-        boolean error = false;
         try {
             Statement statement = sqlConnection.createStatement();
 
             ResultSet validate_cont = statement.executeQuery("SELECT * from cont");
 
-            // daca nu este numar atunci eroare
-            if (!Integer.valueOf(cont_creditor).toString().matches("[0-9]+")
-                    || !Integer.valueOf(cont_debitor).toString().matches("[0-9]+")
-                    || suma < 0 || descriere.isBlank()) {
-                error = true;
-            }
+            ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
+            soldContCreditor.next();
+            soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
 
-            if (Integer.valueOf(cont_creditor).toString().isBlank()
-                    || Integer.valueOf(cont_debitor).toString().isBlank()
-                    || Float.valueOf(suma).toString().isBlank()
-                    || descriere.isBlank()) {
-                error = true;
-            }
+            ResultSet soldContDebitor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
+            soldContDebitor.next();
 
-            if (Float.valueOf(suma).isNaN()) error = true;
+            soldFinalDebitor = soldContDebitor.getFloat("sold_curent") - suma;
 
-            if (error == false) {
-                ResultSet soldContCreditor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_creditor + "'"); // cel care primeste
-                soldContCreditor.next();
-                soldFinalCreditor = soldContCreditor.getFloat("sold_curent") + suma;
-                //System.out.println(soldContCreditor.getFloat("sold_curent"));
+            Alertt alert = new Alertt();
 
-                ResultSet soldContDebitor = statement.executeQuery("SELECT * from cont where nr_cont='" + cont_debitor + "'"); // cel care trimite
-                soldContDebitor.next();
-                //System.out.println(soldContDebitor.getFloat("sold_curent"));
-                soldFinalDebitor = soldContDebitor.getFloat("sold_curent") - suma;
-
+            if (soldFinalDebitor < 0 || suma > soldFinalCreditor - suma) {
+                // soldFinalCreditor = sold curent + suma de tranzactionare
+                // verificam daca suma de tranzactionare este mai mare decat soldul curent
+                alert.createInformationAlert("NEGATIVE");
+            } else {
                 String insertSoldFinalCreditor = "UPDATE cont SET sold_curent='" + soldFinalCreditor + "' where nr_cont='" + cont_creditor + "'";
                 String insertSoldFinalDebitor = "UPDATE cont SET sold_curent='" + soldFinalDebitor + "' where nr_cont='" + cont_debitor + "'";
 
@@ -133,14 +135,8 @@ public class DatabaseOperations {
                         "VALUES ('" + cont_debitor + "','" + cont_creditor + "','" + mySQLDate + "','" + suma + "','" + descriere + "')";
 
                 statement.executeUpdate(newTransactionInfo);
-                error = false;
+                alertt.createInformationAlert("TRANZACTIE");
             }
-
-            if (error) {
-                Alertt alertt = new Alertt();
-                alertt.createInformationAlert("ERROR");
-            }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,6 +200,7 @@ public class DatabaseOperations {
         List transactions = new ArrayList();
         List<String> accountsTypes = new ArrayList<>();
         List<Integer> accountNumbers = new ArrayList<>();
+        List<Integer> accountFinalIds = new ArrayList<>();
         try {
             Statement statement = sqlConnection.createStatement();
             ResultSet getAccountsFromDB = statement.executeQuery(getAccounts);
@@ -221,18 +218,17 @@ public class DatabaseOperations {
             for (Integer accNumber : accountNumbers) {
                 ResultSet transaction = statement.executeQuery("SELECT * from tranzactie where cont_debitor='" + accNumber + "' or cont_creditor='" + accNumber + "'");
                 while (transaction.next()) {
-                    accountNumbers.add(accNumber);
+                    accountFinalIds.add(accNumber);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return accountNumbers;
+        return accountFinalIds;
     }
 
     public Set getBestAccount() {
-        //SELECT COUNT(`cont_debitor`) FROM `tranzactie` GROUP BY `cont_debitor`;
         String query = "SELECT *, COUNT(*) from tranzactie group by cont_debitor";
         int cont_debitorMax = -1;
         try {
@@ -295,24 +291,22 @@ public class DatabaseOperations {
         return listSuma;
 
     }
-    public void delete()
-    {
+
+    public void delete() {
         ArrayList<Suma> listSuma = getBilant();
         String query;
-        int ok=0;
+        int ok = 0;
 
         try {
-            Statement statement=sqlConnection.createStatement();
-            for(Suma suma : listSuma)
-            {
-                if(suma.getSumaCreditoare()==0&&suma.getSumaDebitoare()==0)
-                {
-                    ok=1;
-                   query="DELETE from cont WHERE nr_cont = "+ suma.getNumarCont();
-                   statement.executeUpdate(query);
+            Statement statement = sqlConnection.createStatement();
+            for (Suma suma : listSuma) {
+                if (suma.getSumaCreditoare() == 0 && suma.getSumaDebitoare() == 0) {
+                    ok = 1;
+                    query = "DELETE from cont WHERE nr_cont = " + suma.getNumarCont();
+                    statement.executeUpdate(query);
                 }
             }
-            if(ok==1) alertt.createInformationAlert("DELETE_OK");
+            if (ok == 1) alertt.createInformationAlert("DELETE_OK");
             else alertt.createInformationAlert("DELETE_INFO");
 
 

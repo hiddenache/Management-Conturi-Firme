@@ -1,5 +1,6 @@
 package screens;
 
+import com.example.Otherss.Alertt;
 import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -11,15 +12,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ScreenPopUpNumeCont extends Screen{
+public class ScreenPopUpNumeCont extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 300;
     private static final int STAGE_DEFAULT_HEIGHT = 150;
     private static TextArea txtNumeCont;
-    private List<String> listaTranzactii=new ArrayList<>();
+    private List<String> listaTranzactii = new ArrayList<>();
 
     Button btnSearch;
+
     public ScreenPopUpNumeCont(Connection sqlConnection) {
-     this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -30,40 +32,48 @@ public class ScreenPopUpNumeCont extends Screen{
     }
 
 
-
-
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("");
     }
+
     protected void createControls() {
 
         Label lblNume = new Label("Introduceti numarul contului:");
         txtNumeCont = new TextArea("");
-        btnSearch=new Button("Cautare");
+        btnSearch = new Button("Cautare");
 
-        vBox.getChildren().addAll(lblNume,txtNumeCont,btnSearch);
+        vBox.getChildren().addAll(lblNume, txtNumeCont, btnSearch);
         createBtnHandlers();
     }
 
     private void createBtnHandlers() {
         btnSearch.setOnMouseClicked(mouseEvent -> {
             Set transactions = new HashSet();
-            if(!txtNumeCont.getText().isBlank() || Integer.parseInt(txtNumeCont.getText()) < 0 || Integer.parseInt(txtNumeCont.getText()) > 99999){
+            Alertt alert = new Alertt();
+            if (!txtNumeCont.getText().isBlank() || txtNumeCont.getText() != "") {
                 try {
                     DatabaseOperations op = new DatabaseOperations(sqlConnection);
-                    for(Object tran : op.getTransactions(Integer.valueOf(txtNumeCont.getText()))){
-                        transactions.add(tran);
+                    if (op.checkIfAccExists(txtNumeCont.getText())) {
+                        if (!op.getTransactions(Integer.valueOf(txtNumeCont.getText())).isEmpty() || Integer.parseInt(txtNumeCont.getText()) < 0 || Integer.parseInt(txtNumeCont.getText()) > 99999) {
+                            for (Object tran : op.getTransactions(Integer.valueOf(txtNumeCont.getText()))) {
+                                transactions.add(tran);
+                            }
+                            listaTranzactii = transactions.stream().toList();
+                            new ScreenListViewConturi(sqlConnection, listaTranzactii);
+                        } else {
+                            alert.createInformationAlert("EMPTY");
+                        }
+                        //listaTranzactii.clear();
+                        transactions.clear();
+                    } else {
+                        alert.createInformationAlert("NOACC");
                     }
-                    listaTranzactii = transactions.stream().toList();
-                    if(!listaTranzactii.isEmpty()){
-                         new ScreenListViewConturi(sqlConnection,listaTranzactii);
-                    }
-                    listaTranzactii.clear();
-                    transactions.clear();
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                alert.createInformationAlert("EMPTY");
             }
         });
     }

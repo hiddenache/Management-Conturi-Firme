@@ -1,5 +1,6 @@
 package screens;
 
+import com.example.Otherss.Alertt;
 import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -46,8 +47,16 @@ public class ScreenSoldCurent extends Screen {
         btnSold.setOnMouseClicked(mouseEvent -> {
             try {
                 DatabaseOperations op = new DatabaseOperations(sqlConnection);
-                op.getSoldCurent("SELECT " + columnLabel + " from cont where nr_cont='" + nrCont.getText() + "'", sold, columnLabel);
-                //System.out.println(op.getInfo(sqlConnection,"SELECT " + columnLabel + " from cont where nr_cont='"+txtNrCont.getText()+"'", sold, columnLabel));
+                Alertt alert = new Alertt();
+                if (txtNrCont.getText().isBlank() || txtNrCont.getText().isEmpty()) {
+                    alert.createInformationAlert("EMPTY");
+                } else {
+                    if (op.checkIfAccExists(txtNrCont.getText())) {
+                        sold.setText(op.getSoldCurent("SELECT " + columnLabel + " from cont where nr_cont='" + txtNrCont.getText() + "'", columnLabel) + "$");
+                    } else {
+                        alert.createInformationAlert("NOACC");
+                    }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

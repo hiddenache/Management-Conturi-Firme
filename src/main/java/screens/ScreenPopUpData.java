@@ -1,5 +1,6 @@
 package screens;
 
+import com.example.Otherss.Alertt;
 import database.DatabaseOperations;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -12,15 +13,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ScreenPopUpData extends Screen{
+public class ScreenPopUpData extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 250;
-    DatePicker firstDatePicker=new DatePicker();
-    DatePicker lastDatePicker=new DatePicker();
-    private List<String> listaTranzactii=new ArrayList<>();
+    DatePicker firstDatePicker = new DatePicker();
+    DatePicker lastDatePicker = new DatePicker();
+    private List<String> listaTranzactii = new ArrayList<>();
     Button btnSearch;
+
     public ScreenPopUpData(Connection sqlConnection) {
-        this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -31,45 +33,44 @@ public class ScreenPopUpData extends Screen{
     }
 
 
-
-
     protected void createStage() {
         super.createStage(STAGE_DEFAULT_WIDTH, STAGE_DEFAULT_HEIGHT);
         this.stage.setTitle("");
     }
+
     protected void createControls() {
 
         Label lblFirstDate = new Label("Introduceti data de inceput:");
         Label lblLastDate = new Label("Introduceti data de sfarsit:");
-       firstDatePicker.setOnAction(e->{
-           LocalDate firstDate=firstDatePicker.getValue();
-           System.out.println(firstDate);
-       });
-       lastDatePicker.setOnAction(e ->{
-           LocalDate lastDate=lastDatePicker.getValue();
-           System.out.println(lastDate);
-       });
+        firstDatePicker.setOnAction(e -> {
+            LocalDate firstDate = firstDatePicker.getValue();
+        });
+        lastDatePicker.setOnAction(e -> {
+            LocalDate lastDate = lastDatePicker.getValue();
+        });
 
-        btnSearch=new Button("Cautare");
-        vBox.getChildren().addAll(lblFirstDate,firstDatePicker,lblLastDate,lastDatePicker,btnSearch);
+        btnSearch = new Button("Cautare");
+        vBox.getChildren().addAll(lblFirstDate, firstDatePicker, lblLastDate, lastDatePicker, btnSearch);
         Set transactions = new HashSet();
+        Alertt alert = new Alertt();
         btnSearch.setOnMouseClicked(mouseEvent -> {
-            try{
+            try {
                 DatabaseOperations op = new DatabaseOperations(sqlConnection);
-                if(!(firstDatePicker.getValue() == null) || !(lastDatePicker.getValue() == null)){
-                    for(Object tran : op.getTransactionsFromDateToDate( firstDatePicker.getValue(), lastDatePicker.getValue())){
+                if (!(firstDatePicker.getValue() == null) || !(lastDatePicker.getValue() == null)) {
+                    for (Object tran : op.getTransactionsFromDateToDate(firstDatePicker.getValue(), lastDatePicker.getValue())) {
                         transactions.add(tran);
                     }
                     listaTranzactii = transactions.stream().toList();
-                    if(!listaTranzactii.isEmpty()){
-                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection,listaTranzactii);
+                    if (!listaTranzactii.isEmpty()) {
+                        ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection, listaTranzactii);
+                    } else {
+                        alert.createInformationAlert("NOTRANSACTIONS");
                     }
                     transactions.clear();
+                } else {
+                    alert.createInformationAlert("EMPTY");
                 }
-                else{
-                    System.out.println("Selectati o data");
-                }
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

@@ -10,11 +10,11 @@ public class ScreenAfisareTranzactii extends Screen {
     private static final int STAGE_DEFAULT_WIDTH = 600;
     private static final int STAGE_DEFAULT_HEIGHT = 200;
     private static Button btnTranzactiiNumeCont, btnTranzactiiData, btnTranzactiiTipCont;
-    private List<String> listaTranzactii = new ArrayList<>();
+    private final List<String> listaTranzactii = new ArrayList<>();
 
 
     public ScreenAfisareTranzactii(Connection sqlConnection) {
-        this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
 
         createVBox();
         createScene();
@@ -25,7 +25,6 @@ public class ScreenAfisareTranzactii extends Screen {
 
         stage.show();
     }
-
 
 
     protected void createStage() {
@@ -47,7 +46,7 @@ public class ScreenAfisareTranzactii extends Screen {
     private void createBtnHandlers() {
         btnTranzactiiTipCont.setOnMouseClicked(mouseEvent -> new ScreenAfisareTranzactiiTipCont(sqlConnection));
         btnTranzactiiData.setOnMouseClicked(mouseEvent -> {
-          new ScreenPopUpData(sqlConnection);
+            new ScreenPopUpData(sqlConnection);
 
 
         });

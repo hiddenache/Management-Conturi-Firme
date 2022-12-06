@@ -3,7 +3,10 @@ package screens;
 
 import database.DatabaseOperations;
 import javafx.collections.FXCollections;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 
 import java.sql.Connection;
 import java.util.regex.Matcher;
@@ -18,10 +21,10 @@ public class ScreenAdaugareCont extends Screen {
     private static TextArea txtDescriere;
     private static TextArea txtSoldInitial;
 
-    String[] items = { "ca", "pa", "ac" };
+    String[] items = {"ca", "pa", "ac"};
 
     public ScreenAdaugareCont(Connection sqlConnection) {
-      this.sqlConnection=sqlConnection;
+        this.sqlConnection = sqlConnection;
         createVBox();
         createScene();
         createStage();
@@ -30,7 +33,6 @@ public class ScreenAdaugareCont extends Screen {
         vBox.prefWidthProperty().bind(stage.widthProperty());
         stage.show();
     }
-
 
 
     protected void createStage() {
@@ -56,21 +58,24 @@ public class ScreenAdaugareCont extends Screen {
             DatabaseOperations op = new DatabaseOperations(sqlConnection);
             //   sqlConnection=getConnection().orElse(null);
             Matcher matcher = pattern.matcher(txtSoldInitial.getText()); // doar cifre
-            if(txtNumeCont.getText().isEmpty()
+            if (txtNumeCont.getText().isEmpty()
                     || txtDescriere.getText().isEmpty()
                     || choiceBox.getSelectionModel().getSelectedItem() == null
                     || txtSoldInitial.getText().isEmpty()
                     || !matcher.find()
-                    ||Float.parseFloat(txtSoldInitial.getText()) < 0)
+                    || Float.parseFloat(txtSoldInitial.getText()) < 0)
                 alertt.createInformationAlert("ERROR");
-             else{
-                    if(op.addAccount(txtNumeCont.getText(), txtDescriere.getText(),
-                            choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText()))==1) {
-                       alertt.createInformationAlert("SUCCES");
+            else {
+                if(op.checkIfAccExists(txtNumeCont.getText())){
+                    alertt.createInformationAlert("EXISTING");
+                }else{
+                    if (op.addAccount(txtNumeCont.getText(), txtDescriere.getText(),
+                            choiceBox.getSelectionModel().getSelectedItem().toString(), Float.parseFloat(txtSoldInitial.getText())) == 1) {
+                        alertt.createInformationAlert("SUCCES");
                         stage.hide();
-                    }
-                    else alertt.createInformationAlert("ERROR");
+                    } else alertt.createInformationAlert("ERROR");
                 }
+            }
 
         });
     }
