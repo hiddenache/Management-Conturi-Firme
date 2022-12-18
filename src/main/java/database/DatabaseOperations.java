@@ -3,14 +3,13 @@ package database;
 import Storage.Transaction;
 import com.example.Otherss.Alertt;
 import com.example.Otherss.Suma;
-import javafx.css.Size;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DatabaseOperations {
 
@@ -47,21 +46,6 @@ public class DatabaseOperations {
         }
         System.out.println(result);
         return result;
-    }
-
-    public int deleteAccount(String accNum) {
-
-        String queryOp = "DELETE from cont WHERE nr_cont='" + accNum + "'";
-        try {
-            Statement statement = sqlConnection.createStatement();
-            int result = statement.executeUpdate(queryOp);
-            if (result == 1)
-                return 1;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     public boolean checkIfAccExists(String accNum) {
@@ -148,7 +132,7 @@ public class DatabaseOperations {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             alert.createInformationAlert("SAMEACC");
         }
 
@@ -241,28 +225,30 @@ public class DatabaseOperations {
     }
 
     public Set getBestAccount() {
-        String query = "SELECT *, COUNT(*) from tranzactie group by cont_debitor";
-        int cont_debitorMax = -1;
+        ArrayList<Integer> conturi = new ArrayList<>();
+
+        String query = "SELECT cont_creditor , cont_debitor  from tranzactie";
         try {
             Statement statement = sqlConnection.createStatement();
-            ResultSet transaction = statement.executeQuery(query);
-            int cont_debitor = -1;
-            int count = -1;
-            int countMax = -1;
-            while (transaction.next()) {
-                cont_debitor = transaction.getInt("cont_debitor");
-                count = transaction.getInt("COUNT(*)");
-
-                if (count > countMax) {
-                    countMax = count;
-                    cont_debitorMax = cont_debitor;
-                }
+            ResultSet resultSet = statement.executeQuery(query);
+            while (resultSet.next()) {
+                conturi.add(resultSet.getInt("cont_creditor"));
+                conturi.add(resultSet.getInt("cont_debitor"));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
-        return getTransactions(cont_debitorMax);
+        System.out.println(conturi);
+        int bestAccount = Math.toIntExact(conturi.stream().collect(Collectors.groupingBy(i -> i, Collectors.counting()))
+                .values()
+                .stream()
+                .max(Comparator.comparing(Function.identity()))
+                .orElse(0L));
+        bestAccount=conturi.get(bestAccount-1);
+
+
+        return getTransactions(bestAccount);
     }
 
     public ArrayList<Suma> getBilant() {
@@ -271,12 +257,12 @@ public class DatabaseOperations {
         float sold_initial;
         float suma_creditoare;
         float suma_debitoare;
-        ResultSet rsContC, rsContD;
+        ResultSet rsContCD, rsContD;
         String query = "SELECT nr_cont, sold_initial FROM cont ";
         try {
             Statement statement = sqlConnection.createStatement();
             Statement statementC = sqlConnection.createStatement();
-            Statement statementD = sqlConnection.createStatement();
+            // Statement statementD = sqlConnection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()) {
                 suma_creditoare = 0;
@@ -284,13 +270,20 @@ public class DatabaseOperations {
                 nr_cont = resultSet.getInt("nr_cont");
                 sold_initial = resultSet.getFloat("sold_initial");
 
-                rsContC = statementC.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_creditor = " + nr_cont);
-                while (rsContC.next()) suma_creditoare += rsContC.getFloat("suma_tranzactie");
-                rsContC.close();
-
-                rsContD = statementD.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_debitor = " + nr_cont);
-                while (rsContD.next()) suma_debitoare += rsContD.getFloat("suma_tranzactie");
-                rsContD.close();
+//                rsContC = statementC.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_creditor = " + nr_cont);
+//                while (rsContC.next()) suma_creditoare += rsContC.getFloat("suma_tranzactie");
+//                rsContC.close();
+//
+//                rsContD = statementD.executeQuery("SELECT suma_tranzactie FROM tranzactie WHERE cont_debitor = " + nr_cont);
+//                while (rsContD.next()) suma_debitoare += rsContD.getFloat("suma_tranzactie");
+//                rsContD.close();
+                rsContCD = statementC.executeQuery("SELECT suma_tranzactie , cont_creditor , cont_debitor  FROM tranzactie WHERE cont_creditor = " + nr_cont + " OR cont_debitor = " + nr_cont);
+                while (rsContCD.next()) {
+                    if (rsContCD.getInt("cont_creditor") == (nr_cont))
+                        suma_creditoare += rsContCD.getFloat("suma_tranzactie");
+                    else if (rsContCD.getInt("cont_debitor") == (nr_cont))
+                        suma_debitoare += rsContCD.getFloat("suma_tranzactie");
+                }
 
                 listSuma.add(new Suma(nr_cont, sold_initial, suma_creditoare, suma_debitoare));
             }

@@ -22,6 +22,7 @@ public class ScreenListViewConturi extends Screen {
         this.sqlConnection = sqlConnection;
         this.listaTranzactii = listaTranzactii;
         items = FXCollections.observableArrayList(listaTranzactii);
+        this.title="Numar tranzactii : " + listaTranzactii.size();
         createVBox();
         createScene();
         createStage();
@@ -32,7 +33,7 @@ public class ScreenListViewConturi extends Screen {
         stage.show();
     }
 
-    private String title = "Lista tranzactii";
+    private String title = "";
 
     public void setTitle(String title) {
         this.title = title;

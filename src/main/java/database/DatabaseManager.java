@@ -31,12 +31,7 @@ public class DatabaseManager {
             return Optional.of(connection);
         } catch (SQLException e) {
             LOGGER.severe("Nu s-a putut realiza conexiunea la baza de date");
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Eroare conexiune bvaza de date");
-//                alert.setHeaderText("");
-//                String message ="Nu s-a putut realiza conexiunea la baza de date";
-//                alert.setContentText(message);
-//                alert.show();
+
 
         }
         return Optional.empty();

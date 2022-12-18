@@ -15,7 +15,9 @@ import screens.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 //TODO
@@ -100,7 +102,7 @@ public class HelloApplication extends Application {
                     transactions.add(tran);
                 }
                 listaTranzactii = transactions.stream().toList();
-                ScreenListViewConturi viewConturi = new ScreenListViewConturi(sqlConnection, listaTranzactii);
+                 new ScreenListViewConturi(sqlConnection, listaTranzactii);
             }
             transactions.clear();
         });
@@ -109,6 +111,7 @@ public class HelloApplication extends Application {
     public static void main(String[] args) {
 
         launch();
+
     }
 
     private static Optional<Connection> getConnection() {
